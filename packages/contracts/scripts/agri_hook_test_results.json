@@ -1,0 +1,35 @@
+{
+  "timestamp": "2025-12-05T13:53:15.367966",
+  "location": {
+    "latitude": -18.5122,
+    "longitude": -44.555,
+    "name": "Minas Gerais, Brazil"
+  },
+  "weather": {
+    "rainfall": 39.0,
+    "temperature": 24.6,
+    "humidity": 66.9,
+    "sources": [
+      "VisualCrossing",
+      "WeatherAPI",
+      "OpenWeatherMap"
+    ],
+    "timestamp": 1764922995
+  },
+  "drought": {
+    "severity": "NORMAL",
+    "multiplier": 100,
+    "description": "Normal conditions"
+  },
+  "prices": {
+    "base": 5.0,
+    "oracle": 5.0,
+    "pool": 5.0
+  },
+  "metrics": {
+    "deviation": 0.0,
+    "mode": "NORMAL",
+    "bonus_rate": 0.0,
+    "premium": 421.09375
+  }
+}

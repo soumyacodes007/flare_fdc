@@ -1,0 +1,55 @@
+{
+  "location": {
+    "latitude": -18.5122,
+    "longitude": -44.555,
+    "name": "Minas Gerais, Brazil"
+  },
+  "timestamp": "2025-12-05T13:37:49.514376",
+  "raw_data": [
+    {
+      "source": "VisualCrossing",
+      "rainfall": 39.0,
+      "temperature": 24.6,
+      "humidity": 66.9,
+      "timestamp": 1764922061,
+      "success": true
+    },
+    {
+      "source": "WeatherAPI",
+      "rainfall": 50.3,
+      "temperature": 25.0,
+      "humidity": 65.4,
+      "timestamp": 1764922066,
+      "success": true
+    },
+    {
+      "source": "OpenWeatherMap",
+      "rainfall": 0,
+      "temperature": 19.7,
+      "humidity": 96,
+      "timestamp": 1764922069,
+      "success": true
+    }
+  ],
+  "consensus": {
+    "rainfall": 39.0,
+    "temperature": 24.6,
+    "humidity": 66.9,
+    "consensus": false,
+    "sources": [
+      "VisualCrossing",
+      "WeatherAPI",
+      "OpenWeatherMap"
+    ]
+  },
+  "drought_analysis": {
+    "severity": "NORMAL",
+    "multiplier": 100,
+    "description": "Normal conditions - Coffee plants healthy"
+  },
+  "price_impact": {
+    "base_price": 5.0,
+    "adjusted_price": 5.0,
+    "impact_percent": 0
+  }
+}

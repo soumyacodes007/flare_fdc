@@ -1,24 +1,26 @@
 {
-  "name": "oil-disruption-hook",
+  "name": "agri-hook",
   "version": "1.0.0",
   "private": true,
-  "description": "Uniswap V4 hook for oil token with disruption-based pricing",
+  "description": "Agri-Hook - Trustless Agricultural Hedging via Dynamic AMM Protection",
   "workspaces": [
     "packages/*"
   ],
   "scripts": {
-    "contracts:build": "pnpm --filter contracts build",
-    "contracts:test": "pnpm --filter contracts test",
-    "frontend:dev": "pnpm --filter frontend dev",
-    "frontend:build": "pnpm --filter frontend build"
+    "build": "cd packages/contracts && forge build",
+    "test": "cd packages/contracts && forge test",
+    "weather": "cd packages/contracts && python scripts/weather-api/fetch_weather_data.py",
+    "clean": "cd packages/contracts && forge clean"
   },
   "keywords": [
-    "uniswap",
-    "v4",
-    "hooks",
+    "agri-hook",
+    "uniswap-v4",
+    "flare",
     "defi",
+    "agricultural-insurance",
+    "weather-oracle",
     "hackathon"
   ],
-  "author": "",
+  "author": "Agri-Hook Team",
   "license": "MIT"
 }

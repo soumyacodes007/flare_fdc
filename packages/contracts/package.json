@@ -1,7 +1,7 @@
 {
-  "name": "contracts",
+  "name": "@agrihook/contracts",
   "version": "1.0.0",
-  "description": "Smart contracts for Natural Gas Disruption Hook",
+  "description": "Agri-Hook Smart Contracts - Agricultural Hedging via Dynamic AMM Protection",
   "scripts": {
     "build": "forge build",
     "test": "forge test",
@@ -9,14 +9,21 @@
     "test:gas": "forge test --gas-report",
     "coverage": "forge coverage",
     "clean": "forge clean",
-    "deploy:sepolia": "forge script script/Deploy.s.sol --rpc-url sepolia --broadcast --verify",
-    "deploy:base-sepolia": "forge script script/Deploy.s.sol --rpc-url baseSepolia --broadcast --verify",
-    "deploy:coston2": "forge script script/Deploy.s.sol --rpc-url coston2 --broadcast"
+    "deploy:coston2": "forge script script/DeployCoston2.s.sol --rpc-url coston2 --broadcast",
+    "weather": "python scripts/weather-api/fetch_weather_data.py"
   },
   "dependencies": {
-    "@chainlink/contracts": "^1.0.0",
-    "@flarenetwork/flare-periphery-contracts": "^0.1.38",
-    "@layerzerolabs/lz-evm-oapp-v2": "^3.0.147",
-    "@layerzerolabs/lz-evm-protocol-v2": "^3.0.147"
-  }
+    "@flarenetwork/flare-periphery-contracts": "^0.1.38"
+  },
+  "devDependencies": {},
+  "keywords": [
+    "agri-hook",
+    "uniswap-v4",
+    "flare",
+    "defi",
+    "agricultural-insurance",
+    "weather-oracle"
+  ],
+  "author": "Agri-Hook Team",
+  "license": "MIT"
 }

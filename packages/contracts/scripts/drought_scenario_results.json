@@ -1,0 +1,25 @@
+{
+  "scenario": "Severe Drought",
+  "timestamp": "2025-12-05T14:07:58.207521",
+  "location": "Minas Gerais, Brazil",
+  "weather": {
+    "rainfall": 0,
+    "severity": "SEVERE",
+    "multiplier": 150
+  },
+  "prices": {
+    "base": 5.0,
+    "oracle": 7.5,
+    "pool": 5.0,
+    "deviation": 50.0
+  },
+  "protection": {
+    "lp_loss_without": 5000,
+    "lp_loss_with": 0,
+    "insurance_payout": 2500.0,
+    "net_loss": 2500,
+    "survival_rate": "50%"
+  },
+  "innovations_tested": 6,
+  "features_tested": 9
+}
