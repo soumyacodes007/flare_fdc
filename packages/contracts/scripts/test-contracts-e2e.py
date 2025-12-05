@@ -24,6 +24,14 @@ WEATHER_ORACLE_ABI = [
     {"inputs": [{"type": "uint256"}], "name": "calculateWeatherMultiplier", "outputs": [{"type": "uint256"}], "stateMutability": "pure", "type": "function"}
 ]
 
+MOCK_FBTC_ABI = [
+    {"inputs": [], "name": "name", "outputs": [{"type": "string"}], "stateMutability": "view", "type": "function"},
+    {"inputs": [], "name": "symbol", "outputs": [{"type": "string"}], "stateMutability": "view", "type": "function"},
+    {"inputs": [{"type": "address"}], "name": "balanceOf", "outputs": [{"type": "uint256"}], "stateMutability": "view", "type": "function"},
+    {"inputs": [{"type": "address"}, {"type": "uint256"}], "name": "mint", "outputs": [], "stateMutability": "nonpayable", "type": "function"},
+    {"inputs": [], "name": "faucet", "outputs": [], "stateMutability": "nonpayable", "type": "function"}
+]
+
 INSURANCE_VAULT_ABI = [
     {"inputs": [{"type": "int256"}, {"type": "int256"}, {"type": "uint256"}], "name": "createPolicy", "outputs": [{"type": "uint256"}], "stateMutability": "payable", "type": "function"},
     {"inputs": [{"type": "uint256"}, {"type": "bytes32"}], "name": "calculatePremium", "outputs": [{"type": "uint256"}], "stateMutability": "view", "type": "function"},
@@ -284,10 +292,65 @@ class ContractTester:
             print(f"❌ Error: {e}")
             return False
     
+    def test_mock_fbtc(self):
+        """Test MockFBTC contract"""
+        print("\n" + "="*80)
+        print("TEST 3: MockFBTC (FAsset Bitcoin)")
+        print("="*80)
+        
+        if 'MockFBTC' not in self.contracts:
+            print("❌ MockFBTC not loaded")
+            return False
+        
+        token = self.contracts['MockFBTC']
+        
+        try:
+            # Read token info
+            print("\n📊 Token Information:")
+            name = token.functions.name().call()
+            symbol = token.functions.symbol().call()
+            balance = token.functions.balanceOf(self.account.address).call()
+            
+            print(f"   Name: {name}")
+            print(f"   Symbol: {symbol}")
+            print(f"   Your Balance: {balance / 1e18:.2f} {symbol}")
+            
+            # Test faucet
+            print("\n💧 Testing Faucet:")
+            try:
+                tx = token.functions.faucet().build_transaction({
+                    'from': self.account.address,
+                    'nonce': self.w3.eth.get_transaction_count(self.account.address),
+                    'gas': 100000,
+                    'gasPrice': self.w3.eth.gas_price
+                })
+                
+                signed_tx = self.account.sign_transaction(tx)
+                tx_hash = self.w3.eth.send_raw_transaction(signed_tx.rawTransaction)
+                
+                print(f"   Transaction sent: {tx_hash.hex()}")
+                receipt = self.w3.eth.wait_for_transaction_receipt(tx_hash, timeout=120)
+                
+                if receipt['status'] == 1:
+                    new_balance = token.functions.balanceOf(self.account.address).call()
+                    print(f"   ✅ Faucet successful!")
+                    print(f"   New Balance: {new_balance / 1e18:.2f} {symbol}")
+                else:
+                    print(f"   ❌ Transaction failed")
+                    
+            except Exception as e:
+                print(f"   ⚠️  Error: {e}")
+            
+            return True
+            
+        except Exception as e:
+            print(f"❌ Error: {e}")
+            return False
+    
     def test_coffee_token(self):
         """Test CoffeeToken contract"""
         print("\n" + "="*80)
-        print("TEST 3: CoffeeToken")
+        print("TEST 4: CoffeeToken")
         print("="*80)
         
         if 'CoffeeToken' not in self.contracts:
@@ -307,6 +370,32 @@ class ContractTester:
             print(f"   Symbol: {symbol}")
             print(f"   Your Balance: {balance / 1e18:.2f} {symbol}")
             
+            # Test faucet
+            print("\n💧 Testing Faucet:")
+            try:
+                tx = token.functions.faucet().build_transaction({
+                    'from': self.account.address,
+                    'nonce': self.w3.eth.get_transaction_count(self.account.address),
+                    'gas': 100000,
+                    'gasPrice': self.w3.eth.gas_price
+                })
+                
+                signed_tx = self.account.sign_transaction(tx)
+                tx_hash = self.w3.eth.send_raw_transaction(signed_tx.rawTransaction)
+                
+                print(f"   Transaction sent: {tx_hash.hex()}")
+                receipt = self.w3.eth.wait_for_transaction_receipt(tx_hash, timeout=120)
+                
+                if receipt['status'] == 1:
+                    new_balance = token.functions.balanceOf(self.account.address).call()
+                    print(f"   ✅ Faucet successful!")
+                    print(f"   New Balance: {new_balance / 1e18:.2f} {symbol}")
+                else:
+                    print(f"   ❌ Transaction failed")
+                    
+            except Exception as e:
+                print(f"   ⚠️  Error: {e}")
+            
             return True
             
         except Exception as e:
@@ -322,6 +411,7 @@ class ContractTester:
         results = {
             'weather_oracle': self.test_weather_oracle(),
             'insurance_vault': self.test_insurance_vault(),
+            'mock_fbtc': self.test_mock_fbtc(),
             'coffee_token': self.test_coffee_token()
         }
         
@@ -366,6 +456,7 @@ def main():
     private_key = os.getenv('PRIVATE_KEY')
     weather_oracle = os.getenv('WEATHER_ORACLE_ADDRESS')
     insurance_vault = os.getenv('INSURANCE_VAULT_ADDRESS')
+    mock_fbtc = os.getenv('MOCK_FBTC_ADDRESS')
     coffee_token = os.getenv('COFFEE_TOKEN_ADDRESS')
     
     if not private_key:
@@ -389,6 +480,11 @@ def main():
         tester.load_contract('InsuranceVault', insurance_vault, INSURANCE_VAULT_ABI)
     else:
         print("⚠️  INSURANCE_VAULT_ADDRESS not set")
+    
+    if mock_fbtc:
+        tester.load_contract('MockFBTC', mock_fbtc, MOCK_FBTC_ABI)
+    else:
+        print("⚠️  MOCK_FBTC_ADDRESS not set")
     
     if coffee_token:
         tester.load_contract('CoffeeToken', coffee_token, COFFEE_TOKEN_ABI)

@@ -43,10 +43,10 @@ ETHGlobalBuenosAires25/
 └── packages/
     ├── contracts/                   # Smart contracts (Hardhat 3)
     │   ├── contracts/
-    │   │   ├── NatGasToken.sol      # Natural Gas ERC20 token (NATGAS)
-    │   │   ├── MockUSDC.sol         # Mock USDC (6 decimals)
-    │   │   ├── DisruptionOracle.sol # FDC-powered price oracle
-    │   │   ├── NatGasDisruptionHook.sol # Main V4 hook (TODO)
+    │   │   ├── CoffeeToken.sol      # Coffee ERC20 token (COFFEE)
+    │   │   ├── MockFBTC.sol         # Mock FAsset Bitcoin (18 decimals)
+    │   │   ├── WeatherOracle.sol    # FDC-powered weather oracle
+    │   │   ├── AgriHook.sol         # Main V4 hook with all innovations
     │   │   └── libraries/
     │   │       ├── FeeCurve.sol     # Dynamic fee calculations
     │   │       └── BonusCurve.sol   # Bonus calculations
@@ -67,10 +67,11 @@ ETHGlobalBuenosAires25/
 - 18 decimals
 - Mintable for testing
 
-#### MockUSDC.sol
-- Mock USDC for testnet
-- 6 decimals (like real USDC)
+#### MockFBTC.sol
+- Mock FAsset Bitcoin for testnet
+- 18 decimals (standard ERC20)
 - Includes `faucet()` function for easy testing
+- Represents tokenized Bitcoin on Flare Network
 
 #### DisruptionOracle.sol
 - **Powered by Flare Data Connector (FDC)** for decentralized price feeds

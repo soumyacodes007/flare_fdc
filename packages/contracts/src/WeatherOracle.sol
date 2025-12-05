@@ -25,7 +25,7 @@ contract WeatherOracle {
 
     // Data structures for FDC attestations
     struct PriceData {
-        uint256 price;          // Coffee price in USDC (6 decimals)
+        uint256 price;          // Coffee price in FBTC (18 decimals)
         uint256 timestamp;
     }
 
