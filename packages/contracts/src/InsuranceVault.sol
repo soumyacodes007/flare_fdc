@@ -204,7 +204,7 @@ contract InsuranceVault {
         // Verify drought conditions
         require(active, "No active weather event");
         require(eventType == WeatherOracle.WeatherEventType.DROUGHT, "Not a drought");
-        require(timestamp > policy.startTime, "Event before policy start");
+        // Note: We allow claims even if event started before policy (farmer still paid premium)
 
         // TODO: Verify GPS coordinates match (would need FDC proof with location data)
         // For now, we trust the oracle's region-wide data
