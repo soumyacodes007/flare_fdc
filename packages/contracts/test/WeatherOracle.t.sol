@@ -9,7 +9,7 @@ contract WeatherOracleTest is Test {
     address public owner;
     address public user;
 
-    uint256 constant INITIAL_BASE_PRICE = 5_000_000; // $5.00 in 6 decimals
+    uint256 constant INITIAL_BASE_PRICE = 5 * 10**18; // $5.00 in 18 decimals (FBTC)
 
     event BasePriceUpdated(uint256 newPrice, uint256 timestamp);
     event DisruptionUpdated(

@@ -14,8 +14,8 @@ contract InsuranceVaultTest is Test {
     
     int256 constant LATITUDE = -18512200;
     int256 constant LONGITUDE = -44555000;
-    uint256 constant COVERAGE_AMOUNT = 5_000_000_000;
-    uint256 constant INITIAL_BASE_PRICE = 5_000_000;
+    uint256 constant COVERAGE_AMOUNT = 5_000 * 10**6; // $5,000 in 6 decimals
+    uint256 constant INITIAL_BASE_PRICE = 5 * 10**18; // $5 in 18 decimals (FBTC)
 
     function setUp() public {
         owner = address(this);
