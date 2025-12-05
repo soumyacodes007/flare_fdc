@@ -87,7 +87,7 @@ contract ScenariosTest is Test {
         console.log("  Result: Farmer paid premium, no payout needed");
         console.log("  Vault keeps premium for future claims");
         
-        console.log("\n✅ Scenario 1 Complete: Normal weather, no claim");
+        console.log("\n[OK] Scenario 1 Complete: Normal weather, no claim");
     }
     
     // ============================================
@@ -98,7 +98,7 @@ contract ScenariosTest is Test {
         console.log("\n=== SCENARIO 2: Severe Drought (Successful Claim) ===");
         
         // Step 1: Farmer creates policy
-        console.log("Step 1: Farmer João creates policy");
+        console.log("Step 1: Farmer Joao creates policy");
         uint256 coverage = 5000 * 10**6;
         
         vm.prank(farmer);
@@ -145,7 +145,7 @@ contract ScenariosTest is Test {
         assertTrue(claimed);
         assertTrue(payout > 0);
         
-        console.log("\n✅ Scenario 2 Complete: Drought claim successful");
+        console.log("\n[OK] Scenario 2 Complete: Drought claim successful");
     }
     
     // ============================================
@@ -222,7 +222,7 @@ contract ScenariosTest is Test {
         assertTrue(totalPayouts > 0);
         assertTrue(treasury > 0);
         
-        console.log("\n✅ Scenario 3 Complete: Multiple claims processed");
+        console.log("\n[OK] Scenario 3 Complete: Multiple claims processed");
     }
     
     // ============================================
@@ -274,7 +274,7 @@ contract ScenariosTest is Test {
         assertTrue(price3 > price2);
         assertTrue(price2 > price1);
         
-        console.log("\n✅ Scenario 4 Complete: Progressive drought tracked");
+        console.log("\n[OK] Scenario 4 Complete: Progressive drought tracked");
     }
     
     // ============================================
@@ -312,7 +312,7 @@ contract ScenariosTest is Test {
         console.log("  Payout received: ~0.25 CFLR");
         console.log("  Net loss: ~0.25 CFLR");
         
-        console.log("\n✅ Scenario 5 Complete: Late policy not profitable");
+        console.log("\n[OK] Scenario 5 Complete: Late policy not profitable");
     }
     
     // ============================================
@@ -382,7 +382,7 @@ contract ScenariosTest is Test {
             console.log("  Last farmer policy not active");
         }
         
-        console.log("\n⚠️  Scenario 6 Complete: Treasury management critical");
+        console.log("\n[WARNING] Scenario 6 Complete: Treasury management critical");
     }
     
     // ============================================
@@ -444,7 +444,7 @@ contract ScenariosTest is Test {
         assertFalse(activeB);
         assertTrue(claimedB);
         
-        console.log("\n✅ Scenario 7 Complete: Region-specific protection");
+        console.log("\n[OK] Scenario 7 Complete: Region-specific protection");
     }
     
     // ============================================
@@ -483,7 +483,7 @@ contract ScenariosTest is Test {
         vault.claimPayout();
         console.log("  Claim rejected (policy expired)");
         
-        console.log("\n✅ Scenario 8 Complete: Policy expiration enforced");
+        console.log("\n[OK] Scenario 8 Complete: Policy expiration enforced");
     }
     
     // ============================================
@@ -523,7 +523,7 @@ contract ScenariosTest is Test {
         
         assertEq(actualPaid, requiredPremium);
         
-        console.log("\n✅ Scenario 9 Complete: Overpayment refunded");
+        console.log("\n[OK] Scenario 9 Complete: Overpayment refunded");
     }
     
     // ============================================
@@ -539,7 +539,7 @@ contract ScenariosTest is Test {
         vm.deal(joao, 10 ether);
         
         // Step 1: Enrollment
-        console.log("Step 1: João enrolls (via WhatsApp)");
+        console.log("Step 1: Joao enrolls (via WhatsApp)");
         console.log("  Location: Minas Gerais, Brazil");
         console.log("  Expected harvest: 1,000 bags coffee");
         console.log("  Value: $10,000");
@@ -562,7 +562,7 @@ contract ScenariosTest is Test {
         oracle.updateWeatherSimple(30, -18512200, -44555000);
         console.log("  Rainfall: 30mm/week");
         console.log("  Coffee plants: Healthy");
-        console.log("  João earns: Trading fees from LP position");
+        console.log("  Joao earns: Trading fees from LP position");
         
         // Step 3: Drought warning
         console.log("\nStep 3: Drought warning (Month 4)");
@@ -579,7 +579,7 @@ contract ScenariosTest is Test {
         console.log("  Price impact: +50%");
         
         // Step 5: Claim payout
-        console.log("\nStep 5: João claims payout");
+        console.log("\nStep 5: Joao claims payout");
         console.log("  Action: Taps 'Claim' on WhatsApp");
         
         uint256 balanceBefore = joao.balance;
@@ -600,9 +600,9 @@ contract ScenariosTest is Test {
         console.log("  LP position: Protected (circuit breaker)");
         console.log("  Insurance payout: Received");
         console.log("  Net loss: ~$2,500 (50% protected)");
-        console.log("  João: SURVIVES ✅");
+        console.log("  Joao: SURVIVES [OK]");
         
-        console.log("\n🎉 Scenario 10 Complete: Full farmer journey");
+        console.log("\n[SUCCESS] Scenario 10 Complete: Full farmer journey");
         console.log("Traditional insurance: 90 days, often denied");
         console.log("Agri-Hook: 3 minutes, automatic");
     }
