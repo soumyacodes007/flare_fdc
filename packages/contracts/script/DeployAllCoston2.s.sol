@@ -64,16 +64,10 @@ contract DeployAllCoston2 is Script {
         WeatherOracleWithFTSO weatherOracle = new WeatherOracleWithFTSO(initialBasePrice);
         console.log("WeatherOracleWithFTSO:", address(weatherOracle));
         
-        // Configure FTSO
-        weatherOracle.configureFTSO("BTC", 10000, true);
-        console.log("FTSO configured: BTC proxy, 1 BTC = 10,000 bags");
-        
-        // Try to update from FTSO
-        try weatherOracle.updatePriceFromFTSO() {
-            console.log("FTSO price updated successfully");
-        } catch {
-            console.log("FTSO update skipped (data not available yet)");
-        }
+        // FTSO configuration skipped during deployment
+        // Configure manually after deployment if needed
+        console.log("FTSO configuration: SKIPPED (configure manually after deployment)");
+        console.log("Initial base price:", initialBasePrice / 10**18, "FBTC");
         
         // ============================================
         // STEP 3: DEPLOY INSURANCE VAULT
