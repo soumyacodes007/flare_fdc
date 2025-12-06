@@ -20,11 +20,11 @@ contract DeployHookOnly is Script {
     address constant INSURANCE_VAULT_ADDRESS = 0x96fe78279FAf7A13aa28Dbf95372C6211DfE5d4a;
     
     // Hook permission flags (bits 0-13 in address)
-    // beforeSwap = bit 7, afterSwap = bit 8
-    uint160 constant BEFORE_SWAP_FLAG = uint160(1 << 7);
-    uint160 constant AFTER_SWAP_FLAG = uint160(1 << 8);
-    uint160 constant REQUIRED_FLAGS = BEFORE_SWAP_FLAG | AFTER_SWAP_FLAG;
+    // Uniswap V4 encodes permissions in the address
+    // We need to find the correct bit pattern through mining
     uint160 constant FLAG_MASK = 0x3FFF; // First 14 bits
+    
+    // We'll try to find ANY valid address by checking against actual validation
     
     function run() external {
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
