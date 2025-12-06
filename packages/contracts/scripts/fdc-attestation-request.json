@@ -1,0 +1,219 @@
+{
+  "_comment": "Flare Data Connector (FDC) Attestation Request for Weather Data",
+  "_usage": "Submit this request to the FDC verifier on Coston2 testnet to fetch weather data for coffee-growing regions",
+  "_verifier_url": "https://fdc-verifiers-testnet.flare.network/",
+  "_documentation": "https://dev.flare.network/fdc/",
+
+  "attestationType": "0x4a736f6e417069000000000000000000000000000000000000000000000000",
+  "_attestationType_note": "Hex-encoded 'JsonApi' (zero-padded to 32 bytes)",
+
+  "sourceId": "0x4f70656e576561746865724d6170000000000000000000000000000000000000",
+  "_sourceId_note": "Hex-encoded 'OpenWeatherMap' (zero-padded to 32 bytes) - identifies data source",
+
+  "requestBody": {
+    "url": "https://api.openweathermap.org/data/2.5/weather?lat=-18.5122&lon=-44.5550&appid=YOUR_API_KEY&units=metric",
+    "_url_note": "Replace YOUR_API_KEY with your OpenWeatherMap API key. Coordinates are for Minas Gerais, Brazil (major coffee region). units=metric ensures Celsius temperature.",
+
+    "jqTransform": "{rainfall: ((.rain.\"1h\" // 0) * 1), temperature: ((.main.temp * 100) | floor), soilMoisture: ((.main.humidity * 100) | floor), latitude: ((.coord.lat * 1000000) | floor), longitude: ((.coord.lon * 1000000) | floor), timestamp: .dt}",
+    "_jqTransform_note": "Converts OpenWeatherMap response to WeatherData format. Rainfall in mm, temperature in Celsius*100, soil moisture (humidity proxy)*100, GPS coordinates*1e6, Unix timestamp",
+
+    "abi": {
+      "components": [
+        {
+          "internalType": "uint256",
+          "name": "rainfall",
+          "type": "uint256"
+        },
+        {
+          "internalType": "int256",
+          "name": "temperature",
+          "type": "int256"
+        },
+        {
+          "internalType": "int256",
+          "name": "soilMoisture",
+          "type": "int256"
+        },
+        {
+          "internalType": "int256",
+          "name": "latitude",
+          "type": "int256"
+        },
+        {
+          "internalType": "int256",
+          "name": "longitude",
+          "type": "int256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "timestamp",
+          "type": "uint256"
+        }
+      ],
+      "internalType": "struct WeatherOracle.WeatherData",
+      "name": "",
+      "type": "tuple"
+    },
+    "_abi_note": "ABI encoding format matching WeatherOracle.WeatherData struct"
+  },
+
+  "_example_openweathermap_response": {
+    "coord": {
+      "lon": -44.555,
+      "lat": -18.5122
+    },
+    "weather": [
+      {
+        "id": 800,
+        "main": "Clear",
+        "description": "clear sky"
+      }
+    ],
+    "main": {
+      "temp": 28.5,
+      "humidity": 65
+    },
+    "rain": {
+      "1h": 0
+    },
+    "dt": 1732060800
+  },
+
+  "_example_transformed_output": {
+    "rainfall": 0,
+    "temperature": 2850,
+    "soilMoisture": 6500,
+    "latitude": -18512200,
+    "longitude": -44555000,
+    "timestamp": 1732060800,
+    "_note": "rainfall: 0mm (drought); temperature: 2850 = 28.5°C * 100; soilMoisture: 6500 = 65% * 100; GPS: lat/lon * 1e6"
+  },
+
+  "_coffee_growing_regions": {
+    "minas_gerais_brazil": {
+      "lat": -18.5122,
+      "lon": -44.5550,
+      "description": "Largest coffee-producing region in Brazil"
+    },
+    "antioquia_colombia": {
+      "lat": 5.5689,
+      "lon": -75.6794,
+      "description": "Major Colombian coffee region"
+    },
+    "central_highlands_vietnam": {
+      "lat": 12.2646,
+      "lon": 108.0323,
+      "description": "Vietnam's primary coffee region"
+    },
+    "kona_hawaii": {
+      "lat": 19.6400,
+      "lon": -155.9969,
+      "description": "Premium Kona coffee region"
+    }
+  },
+
+  "_step_by_step_guide": {
+    "1": "Get your OpenWeatherMap API key from https://openweathermap.org/api",
+    "2": "Replace 'YOUR_API_KEY' in the url field with your actual key",
+    "3": "Choose coffee region coordinates from _coffee_growing_regions",
+    "4": "Submit this JSON to FDC verifier at https://fdc-verifiers-testnet.flare.network/",
+    "5": "Wait for attestation proof to be generated",
+    "6": "Use the proof to call WeatherOracle.setWeatherDisruptionWithFDC(proof)",
+    "7": "Your contract will verify and update weather conditions"
+  },
+
+  "_jq_transformation_breakdown": {
+    "input": "OpenWeatherMap API response",
+    "explanation": "Extract weather data and convert to contract format",
+    "operations": [
+      {
+        "step": ".rain.\"1h\" // 0",
+        "purpose": "Get rainfall in last hour (mm), default to 0 if no rain"
+      },
+      {
+        "step": ".main.temp * 100 | floor",
+        "purpose": "Convert temperature to Celsius*100 (28.5°C → 2850)"
+      },
+      {
+        "step": ".main.humidity * 100 | floor",
+        "purpose": "Convert humidity to percentage*100 (65% → 6500)"
+      },
+      {
+        "step": ".coord.lat * 1000000 | floor",
+        "purpose": "Convert latitude to fixed-point (6 decimals)"
+      },
+      {
+        "step": ".coord.lon * 1000000 | floor",
+        "purpose": "Convert longitude to fixed-point (6 decimals)"
+      },
+      {
+        "step": ".dt",
+        "purpose": "Unix timestamp from API"
+      }
+    ],
+    "output": "{rainfall: 0, temperature: 2850, soilMoisture: 6500, latitude: -18512200, longitude: -44555000, timestamp: 1732060800}"
+  },
+
+  "_contract_compatibility": {
+    "contract": "WeatherOracle.sol",
+    "function": "setWeatherDisruptionWithFDC(IWeb2Json.Proof calldata proof)",
+    "struct": "struct WeatherData { uint256 rainfall; int256 temperature; int256 soilMoisture; int256 latitude; int256 longitude; uint256 timestamp; }",
+    "validation": [
+      "timestamp <= block.timestamp",
+      "timestamp > block.timestamp - 1 hours"
+    ],
+    "drought_detection": [
+      "rainfall == 0 → SEVERE_DROUGHT (150% price multiplier)",
+      "rainfall < 5mm → MODERATE_DROUGHT (130% price multiplier)",
+      "rainfall < 10mm → MILD_DROUGHT (115% price multiplier)",
+      "rainfall >= 10mm → NORMAL (100% price multiplier)"
+    ]
+  },
+
+  "_alternative_weather_apis": {
+    "weatherapi_com": {
+      "url": "https://api.weatherapi.com/v1/current.json?key=YOUR_KEY&q=-18.5122,-44.5550",
+      "jqTransform": "{rainfall: ((.current.precip_mm // 0) * 1), temperature: ((.current.temp_c * 100) | floor), soilMoisture: ((.current.humidity * 100) | floor), latitude: ((.location.lat * 1000000) | floor), longitude: ((.location.lon * 1000000) | floor), timestamp: .current.last_updated_epoch}",
+      "description": "Alternative weather API with similar data structure"
+    },
+    "visualcrossing": {
+      "url": "https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/-18.5122,-44.5550?key=YOUR_KEY&unitGroup=metric&include=current",
+      "description": "Premium weather API with historical data"
+    }
+  },
+
+  "_testing_checklist": [
+    "✓ Register for OpenWeatherMap API key (free tier: 60 calls/min)",
+    "✓ Test API endpoint with curl or Postman",
+    "✓ Verify response contains 'main.temp', 'main.humidity', 'rain.1h' fields",
+    "✓ Test JQ transformation locally (use jq CLI tool)",
+    "✓ Submit attestation request to FDC verifier",
+    "✓ Retrieve proof from verifier",
+    "✓ Call contract function with proof on Coston2",
+    "✓ Verify currentWeatherEvent updated in contract",
+    "✓ Check getTheoreticalPrice() reflects weather adjustment"
+  ],
+
+  "_drought_scenario_testing": {
+    "severe_drought": {
+      "rainfall": 0,
+      "expected_multiplier": 150,
+      "expected_price_impact": "+50%"
+    },
+    "moderate_drought": {
+      "rainfall": 3,
+      "expected_multiplier": 130,
+      "expected_price_impact": "+30%"
+    },
+    "mild_drought": {
+      "rainfall": 7,
+      "expected_multiplier": 115,
+      "expected_price_impact": "+15%"
+    },
+    "normal_conditions": {
+      "rainfall": 15,
+      "expected_multiplier": 100,
+      "expected_price_impact": "0%"
+    }
+  }
+}
