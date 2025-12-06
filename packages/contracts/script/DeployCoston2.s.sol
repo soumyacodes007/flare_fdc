@@ -19,7 +19,7 @@ import { IPoolManager } from "@uniswap/v4-core/src/interfaces/IPoolManager.sol";
 contract DeployCoston2 is Script {
     // Coston2 System Addresses
     address constant FTSO_REGISTRY = 0xaD67FE66660Fb8dFE9d6b1b4240d8650e30F6019;
-    address constant FDC_VERIFICATION = 0x89D20A10a3014B2023023F01d9337583B9273c52;
+    address constant FDC_VERIFICATION = 0x89D20A10A3014b2023023f01D9337583B9273c52;
     
     function run() external {
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
