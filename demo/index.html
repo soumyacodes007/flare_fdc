@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agri-Hook | Hostile Infrastructure for DeFi</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Background -->
+    <div class="background">
+        <div class="gradient-orb orb-1"></div>
+        <div class="gradient-orb orb-2"></div>
+        <div class="gradient-orb orb-3"></div>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">
+            <div class="logo-icon"></div>
+            <span class="logo-text">AGRI-HOOK</span>
+            <span class="logo-subtitle">Hostile Infrastructure</span>
+        </div>
+        <button class="connect-wallet" id="connectWallet">
+            <span class="wallet-icon"></span>
+            <span class="wallet-text">Connect Wallet</span>
+        </button>
+    </header>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Left Column: Farmer View -->
+        <div class="column farmer-column">
+            <div class="column-header">
+                <h2>Farmer View</h2>
+                <div class="location-badge">
+                    <span class="location-icon"></span>
+                    Minas Gerais, Brazil
+                </div>
+            </div>
+
+            <!-- Wallet Balance Card -->
+            <div class="glass-card balance-card">
+                <div class="card-label">Wallet Balance</div>
+                <div class="balance-amount" id="walletBalance">0.00</div>
+                <div class="balance-currency">FBTC</div>
+                <div class="balance-usd" id="balanceUsd">$0.00 USD</div>
+            </div>
+
+            <!-- Policy Status Card -->
+            <div class="glass-card policy-card">
+                <div class="card-header">
+                    <div class="card-label">Insurance Policy</div>
+                    <div class="status-badge" id="policyStatus">ACTIVE</div>
+                </div>
+                <div class="policy-details">
+                    <div class="policy-row">
+                        <span class="policy-label">Coverage</span>
+                        <span class="policy-value">10,000 USDC</span>
+                    </div>
+                    <div class="policy-row">
+                        <span class="policy-label">Premium Paid</span>
+                        <span class="policy-value">500 USDC</span>
+                    </div>
+                    <div class="policy-row">
+                        <span class="policy-label">Location</span>
+                        <span class="policy-value">-18.512, -44.555</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Claim Button -->
+            <button class="claim-button" id="claimButton" disabled>
+                <span class="button-icon"></span>
+                <span class="button-text">Claim Payout</span>
+                <span class="button-amount">5,000 USDC</span>
+            </button>
+
+            <!-- Farmer Stats -->
+            <div class="glass-card stats-card">
+                <div class="stat-item">
+                    <div class="stat-label">Crop Value</div>
+                    <div class="stat-value">25,000 COFFEE</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">LP Position</div>
+                    <div class="stat-value">12,500 FBTC</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Protocol View -->
+        <div class="column protocol-column">
+            <div class="column-header">
+                <h2>Protocol War Room</h2>
+                <div class="network-badge">
+                    <span class="network-dot"></span>
+                    Flare Coston2
+                </div>
+            </div>
+
+            <!-- Weather Oracle Card -->
+            <div class="glass-card oracle-card">
+                <div class="card-header">
+                    <div class="card-label">FDC Weather Oracle</div>
+                    <div class="weather-status" id="weatherStatus">NORMAL</div>
+                </div>
+                <div class="oracle-data">
+                    <div class="oracle-row">
+                        <span class="oracle-label">Rainfall (7d)</span>
+                        <span class="oracle-value" id="rainfall">45 mm</span>
+                    </div>
+                    <div class="oracle-row">
+                        <span class="oracle-label">Temperature</span>
+                        <span class="oracle-value" id="temperature">27°C</span>
+                    </div>
+                    <div class="oracle-row">
+                        <span class="oracle-label">FDC Consensus</span>
+                        <span class="oracle-value consensus-check" id="consensus">3/3 Verified</span>
+                    </div>
+                </div>
+                
+                <!-- Admin Toggle -->
+                <div class="admin-toggle">
+                    <label class="toggle-label">
+                        <span class="toggle-text">ADMIN: SIMULATE DROUGHT</span>
+                        <input type="checkbox" id="droughtToggle">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Price Chart Card -->
+            <div class="glass-card chart-card">
+                <div class="card-label">Price Deviation Monitor</div>
+                <canvas id="priceChart"></canvas>
+                <div class="chart-legend">
+                    <div class="legend-item">
+                        <span class="legend-dot pool-color"></span>
+                        <span class="legend-text">Pool Price</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-dot oracle-color"></span>
+                        <span class="legend-text">Oracle Price</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Defense System Card -->
+            <div class="glass-card defense-card">
+                <div class="card-header">
+                    <div class="card-label">Arbitrage Defense System</div>
+                    <div class="fee-badge" id="feeBadge">0.01%</div>
+                </div>
+                <div class="defense-stats">
+                    <div class="defense-stat">
+                        <div class="stat-label">Current Fee</div>
+                        <div class="stat-value fee-value" id="currentFee">0.01%</div>
+                    </div>
+                    <div class="defense-stat">
+                        <div class="stat-label">Treasury Value</div>
+                        <div class="stat-value treasury-value" id="treasuryValue">10,000</div>
+                    </div>
+                </div>
+                <button class="bot-button" id="botButton">
+                    <span class="bot-icon"></span>
+                    SIMULATE BOT ATTACK
+                </button>
+            </div>
+
+            <!-- Terminal Log -->
+            <div class="glass-card terminal-card">
+                <div class="card-label">System Log</div>
+                <div class="terminal" id="terminal">
+                    <div class="terminal-line">> System initialized</div>
+                    <div class="terminal-line">> FDC oracle connected</div>
+                    <div class="terminal-line">> Hook deployed at 0x0FA2...80C0</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Confetti Canvas -->
+    <canvas id="confetti"></canvas>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
