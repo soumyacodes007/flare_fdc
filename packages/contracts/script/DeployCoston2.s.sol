@@ -8,6 +8,7 @@ import "../src/InsuranceVault.sol";
 import "../src/CoffeeToken.sol";
 import "../src/MockFBTC.sol";
 import "../src/AgriHook.sol";
+import "../test/mocks/MockPoolManager.sol";
 import { IPoolManager } from "@uniswap/v4-core/src/interfaces/IPoolManager.sol";
 
 /**
@@ -19,9 +20,6 @@ contract DeployCoston2 is Script {
     // Coston2 System Addresses
     address constant FTSO_REGISTRY = 0xaD67FE66660Fb8dFE9d6b1b4240d8650e30F6019;
     address constant FDC_VERIFICATION = 0x89D20A10a3014B2023023F01d9337583B9273c52;
-    
-    // Uniswap V4 PoolManager (if deployed on Coston2, otherwise use mock)
-    address constant POOL_MANAGER = address(0); // Set to actual address if available
     
     function run() external {
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
@@ -103,10 +101,11 @@ contract DeployCoston2 is Script {
         console.log("\n\nSTEP 3: DEPLOYING INSURANCE VAULT");
         console.log("-----------------------------------------------------------------");
         
-        // Cast WeatherOracleWithFTSO to WeatherOracle interface
+        // Cast WeatherOracleWithFTSO to WeatherOracle interface for InsuranceVault
         WeatherOracle oracleInterface = WeatherOracle(address(weatherOracleWithFTSO));
         
         console.log("3.1 Deploying InsuranceVault...");
+        // InsuranceVault constructor: (WeatherOracle _weatherOracle)
         InsuranceVault vault = new InsuranceVault(oracleInterface);
         console.log("    Address:", address(vault));
         console.log("    Oracle:", address(weatherOracleWithFTSO));
@@ -118,25 +117,31 @@ contract DeployCoston2 is Script {
         console.log("    Treasury funded with:", initialFunding / 10**18, "CFLR");
         
         // ============================================
-        // STEP 4: DEPLOY AGRI HOOK
+        // STEP 4: DEPLOY MOCK POOL MANAGER
         // ============================================
-        console.log("\n\nSTEP 4: DEPLOYING AGRI HOOK");
+        console.log("\n\nSTEP 4: DEPLOYING MOCK POOL MANAGER");
+        console.log("-----------------------------------------------------------------");
+        console.log("4.1 Deploying MockPoolManager...");
+        console.log("    (For testing - replace with real Uniswap V4 PoolManager in production)");
+        
+        MockPoolManager mockPoolManager = new MockPoolManager();
+        console.log("    Address:", address(mockPoolManager));
+        
+        // ============================================
+        // STEP 5: DEPLOY AGRI HOOK
+        // ============================================
+        console.log("\n\nSTEP 5: DEPLOYING AGRI HOOK");
         console.log("-----------------------------------------------------------------");
         
-        if (POOL_MANAGER == address(0)) {
-            console.log("WARNING: PoolManager not set - skipping AgriHook deployment");
-            console.log("         Deploy Uniswap V4 PoolManager first or use mock");
-            console.log("         Then update POOL_MANAGER constant and redeploy");
-        } else {
-            console.log("4.1 Deploying AgriHook...");
-            AgriHook hook = new AgriHook(
-                IPoolManager(POOL_MANAGER),
-                oracleInterface
-            );
-            console.log("    Address:", address(hook));
-            console.log("    PoolManager:", POOL_MANAGER);
-            console.log("    Oracle:", address(weatherOracleWithFTSO));
-        }
+        console.log("5.1 Deploying AgriHook...");
+        // AgriHook constructor: (IPoolManager _poolManager, WeatherOracle _oracle)
+        AgriHook hook = new AgriHook(
+            IPoolManager(address(mockPoolManager)),
+            oracleInterface
+        );
+        console.log("    Address:", address(hook));
+        console.log("    PoolManager:", address(mockPoolManager));
+        console.log("    Oracle:", address(weatherOracleWithFTSO));
         
         vm.stopBroadcast();
         
@@ -152,9 +157,8 @@ contract DeployCoston2 is Script {
         console.log("CoffeeToken:           ", address(coffee));
         console.log("WeatherOracleWithFTSO: ", address(weatherOracleWithFTSO));
         console.log("InsuranceVault:        ", address(vault));
-        if (POOL_MANAGER != address(0)) {
-            // Hook address would be printed here if deployed
-        }
+        console.log("MockPoolManager:       ", address(mockPoolManager));
+        console.log("AgriHook:              ", address(hook));
         console.log("-----------------------------------------------------------------");
         
         console.log("\nFRONTEND CONFIGURATION:");
@@ -165,6 +169,8 @@ contract DeployCoston2 is Script {
         console.log("NEXT_PUBLIC_COFFEE_ADDRESS=", address(coffee));
         console.log("NEXT_PUBLIC_ORACLE_ADDRESS=", address(weatherOracleWithFTSO));
         console.log("NEXT_PUBLIC_VAULT_ADDRESS=", address(vault));
+        console.log("NEXT_PUBLIC_POOL_MANAGER_ADDRESS=", address(mockPoolManager));
+        console.log("NEXT_PUBLIC_HOOK_ADDRESS=", address(hook));
         console.log("NEXT_PUBLIC_FTSO_REGISTRY=", FTSO_REGISTRY);
         console.log("NEXT_PUBLIC_FDC_VERIFICATION=", FDC_VERIFICATION);
         console.log("-----------------------------------------------------------------");
@@ -207,8 +213,8 @@ contract DeployCoston2 is Script {
         console.log("3. Create test insurance policies");
         console.log("4. Simulate weather events");
         console.log("5. Test claim payouts");
-        console.log("6. Deploy Uniswap V4 PoolManager (if needed)");
-        console.log("7. Deploy AgriHook with PoolManager");
+        console.log("6. Test AgriHook with MockPoolManager");
+        console.log("7. Replace MockPoolManager with real Uniswap V4 (production)");
         console.log("-----------------------------------------------------------------");
         
         console.log("\n[SUCCESS] Deployment complete!");
