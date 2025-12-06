@@ -1,4 +1,13 @@
 {
+  "../../lib/openzeppelin-contracts": {
+    "rev": "fcbae5394ae8ad52d8e580a3477db99814b9d565"
+  },
+  "../../lib/v4-core": {
+    "rev": "e50237c43811bd9b526eff40f26772152a42daba"
+  },
+  "../../lib/v4-periphery": {
+    "rev": "3779387e5d296f39df543d23524b050f89a62917"
+  },
   "lib/flare-foundry-periphery-package": {
     "tag": {
       "name": "v0.0.22",

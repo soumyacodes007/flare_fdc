@@ -1,0 +1,9 @@
+{
+  "attestationType": "0x576562324a736f6e000000000000000000000000000000000000000000000000",
+  "sourceId": "0x5765623200000000000000000000000000000000000000000000000000000000",
+  "requestBody": {
+    "url": "https://api.openweathermap.org/data/2.5/weather?lat=-18.5122&lon=-44.555&appid=YOUR_API_KEY&units=metric",
+    "postprocessJq": "{ rainfall: ((.rain.\"1h\" // 0) | floor), temperature: ((.main.temp * 100) | floor), soilMoisture: ((.main.humidity * 100) | floor), latitude: ((.coord.lat * 1000000) | floor), longitude: ((.coord.lon * 1000000) | floor), timestamp: .dt }",
+    "abiSignature": "{\"components\":[{\"internalType\":\"uint256\",\"name\":\"rainfall\",\"type\":\"uint256\"},{\"internalType\":\"int256\",\"name\":\"temperature\",\"type\":\"int256\"},{\"internalType\":\"int256\",\"name\":\"soilMoisture\",\"type\":\"int256\"},{\"internalType\":\"int256\",\"name\":\"latitude\",\"type\":\"int256\"},{\"internalType\":\"int256\",\"name\":\"longitude\",\"type\":\"int256\"},{\"internalType\":\"uint256\",\"name\":\"timestamp\",\"type\":\"uint256\"}],\"internalType\":\"struct WeatherOracle.WeatherData\",\"name\":\"\",\"type\":\"tuple\"}"
+  }
+}

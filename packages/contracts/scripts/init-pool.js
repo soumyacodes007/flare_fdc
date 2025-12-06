@@ -1,7 +1,7 @@
 const { ethers } = require('ethers');
 require('dotenv').config();
 
-const POOL_MANAGER = '0x513be19378C375466e29D6b4d001E995FBA8c2ce';
+const POOL_MANAGER = '0x7aeaA5d134fd8875366623ff9D394d3F2C0Af0Df';
 const COFFEE_TOKEN = '0x0cd5af44F36bCD3B09f9f70aFA9cf6A101d4bc0c';
 const FBTC_TOKEN = '0x8C691A99478D3b3fE039f777650C095578debF12';
 const AGRI_HOOK = '0x0FA2Ea09a870BF42Dd05DB7446a14204489780C0';
@@ -18,7 +18,7 @@ const provider = new ethers.JsonRpcProvider(RPC_URL);
 const wallet = new ethers.Wallet(PRIVATE_KEY, provider);
 
 const POOL_MANAGER_ABI = [
-  'function initialize(tuple(address currency0, address currency1, uint24 fee, int24 tickSpacing, address hooks) key, uint160 sqrtPriceX96, bytes hookData) external returns (int24)',
+  'function initialize(tuple(address currency0, address currency1, uint24 fee, int24 tickSpacing, address hooks) key, uint160 sqrtPriceX96) external returns (int24)',
 ];
 
 const ERC20_ABI = [
@@ -116,7 +116,7 @@ async function main() {
     };
 
     console.log('Initializing pool...');
-    const tx = await poolManager.initialize(poolKey, sqrtPriceX96, '0x');
+    const tx = await poolManager.initialize(poolKey, sqrtPriceX96);
     console.log('⏳ Transaction hash:', tx.hash);
     console.log('⏳ Waiting for confirmation...');
 

@@ -23,9 +23,14 @@
     "swap:test": "node scripts/test-swap.js",
     "fdc:test-attestation": "node scripts/test-fdc.js",
     "weather": "python scripts/weather-api/fetch_weather_data.py",
-    "fdc:test": "npx ts-node scripts/submit-fdc-weather-proof.ts test",
-    "fdc:create": "npx ts-node scripts/submit-fdc-weather-proof.ts create-request",
-    "fdc:submit": "npx ts-node scripts/submit-fdc-weather-proof.ts submit"
+    "fdc:test": "npx ts-node scripts/fdc-integration/test-weather-api.ts",
+    "fdc:create": "npx ts-node scripts/fdc-integration/create-attestation-request.ts",
+    "fdc:submit": "npx ts-node scripts/fdc-integration/submit-proof.ts submit",
+    "fdc:manual": "npx ts-node scripts/fdc-integration/submit-proof.ts manual",
+    "ftso:status": "npx ts-node scripts/ftso-integration/update-price-ftso.ts status",
+    "ftso:update": "npx ts-node scripts/ftso-integration/update-price-ftso.ts update",
+    "ftso:configure": "npx ts-node scripts/ftso-integration/update-price-ftso.ts configure",
+    "ftso:list": "npx ts-node scripts/ftso-integration/list-ftso-symbols.ts"
   },
   "dependencies": {
     "@flarenetwork/flare-periphery-contracts": "^0.1.38",

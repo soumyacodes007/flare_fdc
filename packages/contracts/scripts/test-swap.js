@@ -1,7 +1,7 @@
 const { ethers } = require('ethers');
 require('dotenv').config();
 
-const POOL_MANAGER = '0x513be19378C375466e29D6b4d001E995FBA8c2ce';
+const POOL_MANAGER = '0x7aeaA5d134fd8875366623ff9D394d3F2C0Af0Df';
 const COFFEE_TOKEN = '0x0cd5af44F36bCD3B09f9f70aFA9cf6A101d4bc0c';
 const FBTC_TOKEN = '0x8C691A99478D3b3fE039f777650C095578debF12';
 const AGRI_HOOK = '0x0FA2Ea09a870BF42Dd05DB7446a14204489780C0';
@@ -19,7 +19,8 @@ const provider = new ethers.JsonRpcProvider(RPC_URL);
 const wallet = new ethers.Wallet(PRIVATE_KEY, provider);
 
 const POOL_MANAGER_ABI = [
-  'function swap(tuple(address currency0, address currency1, uint24 fee, int24 tickSpacing, address hooks) key, tuple(bool zeroForOne, int256 amountSpecified, uint160 sqrtPriceLimitX96) params, bytes hookData) external returns (int256)',
+  'function swap(tuple(address currency0, address currency1, uint24 fee, int24 tickSpacing, address hooks) key, tuple(bool zeroForOne, int256 amountSpecified, uint160 sqrtPriceLimitX96) params, bytes hookData) external returns (tuple(int128 amount0, int128 amount1))',
+  'function getPool(tuple(address currency0, address currency1, uint24 fee, int24 tickSpacing, address hooks) key) view returns (tuple(bool initialized, uint160 sqrtPriceX96, int24 tick, uint128 liquidity))',
 ];
 
 const ORACLE_ABI = [
@@ -31,6 +32,7 @@ const ORACLE_ABI = [
 const ERC20_ABI = [
   'function balanceOf(address) view returns (uint256)',
   'function approve(address spender, uint256 amount) external returns (bool)',
+  'function allowance(address owner, address spender) view returns (uint256)',
 ];
 
 async function main() {

@@ -121,12 +121,15 @@ async function main() {
   console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
 
   const hookAddress = BigInt(AGRI_HOOK);
-  const beforeSwapFlag = (hookAddress >> 159n) & 1n;
-  const afterSwapFlag = (hookAddress >> 158n) & 1n;
+  // Uniswap V4 hook flags are in lower bits:
+  // BEFORE_SWAP_FLAG = 1 << 7 (bit 7)
+  // AFTER_SWAP_FLAG = 1 << 6 (bit 6)
+  const beforeSwapFlag = (hookAddress >> 7n) & 1n;
+  const afterSwapFlag = (hookAddress >> 6n) & 1n;
 
   console.log('Hook Address:', AGRI_HOOK);
-  console.log('beforeSwap Flag:', beforeSwapFlag === 1n ? '✅ Set' : '❌ Not set');
-  console.log('afterSwap Flag:', afterSwapFlag === 1n ? '✅ Set' : '❌ Not set');
+  console.log('beforeSwap Flag (bit 7):', beforeSwapFlag === 1n ? '✅ Set' : '❌ Not set');
+  console.log('afterSwap Flag (bit 6):', afterSwapFlag === 1n ? '✅ Set' : '❌ Not set');
   console.log('Address Valid:', (beforeSwapFlag === 1n && afterSwapFlag === 1n) ? '✅' : '❌');
 
   console.log('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');

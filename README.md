@@ -20,7 +20,7 @@ A Uniswap V4 Hook that protects coffee farmers by:
 | CoffeeToken | `0x0cd5af44F36bCD3B09f9f70aFA9cf6A101d4bc0c` |
 | WeatherOracleWithFTSO | `0x223163b9109e43BdA9d719DF1e7E584d781b93fd` |
 | InsuranceVault | `0x6c6ad692489a89514bD4C8e9344a0Bc387c32438` |
-| MockPoolManager | `0x513be19378C375466e29D6b4d001E995FBA8c2ce` |
+| MockPoolManager | `0x7aeaA5d134fd8875366623ff9D394d3F2C0Af0Df` |
 | AgriHook | `0x0FA2Ea09a870BF42Dd05DB7446a14204489780C0` |
 
 ## ✅ What's Working
@@ -33,6 +33,8 @@ A Uniswap V4 Hook that protects coffee farmers by:
 - ✅ AgriHook deployed with CREATE2 (correct address flags)
 - ✅ Dynamic fee system based on price deviation
 - ✅ Bonus system for aligned traders
+- ✅ **Liquidity pool initialized** (COFFEE/FBTC)
+- ✅ **Test swaps executed successfully**
 
 ### Smart Contracts
 - ✅ **WeatherOracleWithFTSO**: Fetches FLR/USD prices from Flare's FTSO
@@ -51,12 +53,12 @@ A Uniswap V4 Hook that protects coffee farmers by:
 ## ❌ What's Not Done
 
 ### Integration & Testing
-- ❌ No liquidity pool initialized yet
-- ❌ Hook not registered with PoolManager
-- ❌ No test swaps executed
+- ✅ ~~No liquidity pool initialized yet~~ **DONE**
+- ✅ ~~Hook not registered with PoolManager~~ **DONE** (using MockPoolManager)
+- ✅ ~~No test swaps executed~~ **DONE**
 - ❌ FDC (Flare Data Connector) integration incomplete
 - ❌ Cross-chain messaging not implemented
-- ❌ No frontend/UI
+- ✅ Demo frontend exists (demo/)
 
 ### Smart Contract Gaps
 - ❌ Bonus token transfers not implemented (TODO in AgriHook)

@@ -415,7 +415,7 @@ contract ScenariosTest is Test {
             -45000000,
             5000 * 10**6
         );
-        console.log("  Farmer B: São Paulo");
+        console.log("  Farmer B: Sao Paulo");
         
         // Step 2: Drought only in Region A
         console.log("\nStep 2: Drought only in Region A");
@@ -532,7 +532,7 @@ contract ScenariosTest is Test {
     
     function test_Scenario10_CompleteFarmerJourney() public {
         console.log("\n=== SCENARIO 10: Complete Farmer Journey ===");
-        console.log("Following João from Brazil through entire process\n");
+        console.log("Following Joao from Brazil through entire process\n");
         
         // Setup
         address joao = makeAddr("joao");
