@@ -4,19 +4,27 @@ pragma solidity ^0.8.25;
 import "forge-std/Script.sol";
 import "../src/WeatherOracle.sol";
 import "../src/AgriHook.sol";
+import "../src/HookDeployer.sol";
 import "../test/mocks/MockPoolManager.sol";
 import { IPoolManager } from "@uniswap/v4-core/src/interfaces/IPoolManager.sol";
 
 /**
  * @title DeployHookOnly
  * @notice Deployment script for AgriHook only - uses existing Oracle
- * @dev Deploys MockPoolManager and AgriHook
+ * @dev Deploys MockPoolManager, HookDeployer, and AgriHook using CREATE2
  *      Note: AgriHook and InsuranceVault are independent - no linking needed
  */
 contract DeployHookOnly is Script {
     // EXISTING DEPLOYED ADDRESSES - DO NOT REDEPLOY
     address constant WEATHER_ORACLE_ADDRESS = 0xAD74Af4e6C6C79900b673e73912527089fE7A47D;
     address constant INSURANCE_VAULT_ADDRESS = 0x96fe78279FAf7A13aa28Dbf95372C6211DfE5d4a;
+    
+    // Hook permission flags (bits 0-13 in address)
+    // beforeSwap = bit 7, afterSwap = bit 8
+    uint160 constant BEFORE_SWAP_FLAG = uint160(1 << 7);
+    uint160 constant AFTER_SWAP_FLAG = uint160(1 << 8);
+    uint160 constant REQUIRED_FLAGS = BEFORE_SWAP_FLAG | AFTER_SWAP_FLAG;
+    uint160 constant FLAG_MASK = 0x3FFF; // First 14 bits
     
     function run() external {
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
@@ -44,25 +52,59 @@ contract DeployHookOnly is Script {
         console.log("MockPoolManager deployed at:", address(mockPoolManager));
         
         // ============================================
-        // STEP 2: DEPLOY AGRI HOOK
+        // STEP 2: DEPLOY HOOK DEPLOYER
         // ============================================
-        console.log("\n\nSTEP 2: DEPLOYING AGRI HOOK");
+        console.log("\n\nSTEP 2: DEPLOYING HOOK DEPLOYER");
+        console.log("-----------------------------------------------------------------");
+        console.log("Deploying HookDeployer...");
+        
+        HookDeployer hookDeployer = new HookDeployer();
+        console.log("HookDeployer deployed at:", address(hookDeployer));
+        
+        // ============================================
+        // STEP 3: MINE FOR VALID SALT
+        // ============================================
+        console.log("\n\nSTEP 3: MINING FOR VALID HOOK ADDRESS");
         console.log("-----------------------------------------------------------------");
         
         // Cast existing oracle address to interface
         WeatherOracle oracle = WeatherOracle(WEATHER_ORACLE_ADDRESS);
+        IPoolManager poolManager = IPoolManager(address(mockPoolManager));
         
-        console.log("Deploying AgriHook...");
+        console.log("Mining for valid hook address...");
+        console.log("Required flags: beforeSwap (bit 7) + afterSwap (bit 8)");
+        
+        // Mine for a valid salt
+        bytes32 salt = _findSalt(
+            address(hookDeployer),
+            poolManager,
+            oracle
+        );
+        
+        console.log("Found valid salt:", vm.toString(salt));
+        
+        // ============================================
+        // STEP 4: DEPLOY AGRI HOOK WITH CREATE2
+        // ============================================
+        console.log("\n\nSTEP 4: DEPLOYING AGRI HOOK");
+        console.log("-----------------------------------------------------------------");
+        
+        // Compute predicted address
+        address predictedAddress = hookDeployer.computeAddress(poolManager, oracle, salt);
+        console.log("Predicted hook address:", predictedAddress);
+        console.log("Address flags:", uint160(predictedAddress) & FLAG_MASK);
+        
+        // Deploy with CREATE2
+        console.log("\nDeploying AgriHook with CREATE2...");
         console.log("Constructor args:");
         console.log("  - PoolManager:", address(mockPoolManager));
         console.log("  - Oracle:", address(oracle));
         
-        // AgriHook constructor: (IPoolManager _poolManager, WeatherOracle _oracle)
-        AgriHook hook = new AgriHook(
-            IPoolManager(address(mockPoolManager)),
-            oracle
-        );
+        AgriHook hook = hookDeployer.deploy(poolManager, oracle, salt);
+        
         console.log("\nAgriHook deployed at:", address(hook));
+        require(address(hook) == predictedAddress, "Address mismatch");
+        console.log("Hook address validation: PASSED");
         
         vm.stopBroadcast();
         
@@ -125,5 +167,52 @@ contract DeployHookOnly is Script {
         
         console.log("\n[SUCCESS] Hook deployment complete!");
         console.log("=================================================================\n");
+    }
+    
+    /**
+     * @notice Find a valid salt for CREATE2 deployment
+     * @dev Mines for a salt that produces a hook address with correct flags
+     */
+    function _findSalt(
+        address deployerContract,
+        IPoolManager poolManager,
+        WeatherOracle oracle
+    ) internal view returns (bytes32) {
+        // Get the creation code hash
+        bytes memory creationCode = abi.encodePacked(
+            type(AgriHook).creationCode,
+            abi.encode(poolManager, oracle)
+        );
+        bytes32 creationCodeHash = keccak256(creationCode);
+        
+        console.log("Mining salt (this may take a moment)...");
+        
+        // Mine for valid salt (max 100000 attempts)
+        for (uint256 i = 0; i < 100000; i++) {
+            bytes32 salt = bytes32(i);
+            
+            // Calculate CREATE2 address
+            address predictedAddress = address(uint160(uint256(keccak256(abi.encodePacked(
+                bytes1(0xff),
+                deployerContract,
+                salt,
+                creationCodeHash
+            )))));
+            
+            // Check if address has correct flags (bits 0-13)
+            uint160 addressFlags = uint160(predictedAddress) & FLAG_MASK;
+            
+            if (addressFlags == REQUIRED_FLAGS) {
+                console.log("Salt found after", i + 1, "attempts");
+                return salt;
+            }
+            
+            // Progress indicator every 10000 attempts
+            if (i > 0 && i % 10000 == 0) {
+                console.log("Checked", i, "salts...");
+            }
+        }
+        
+        revert("Could not find valid salt in 100000 attempts");
     }
 }
