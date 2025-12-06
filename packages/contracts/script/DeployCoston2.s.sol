@@ -206,15 +206,53 @@ contract DeployCoston2 is Script {
         console.log("cast call", address(weatherOracleWithFTSO), '"getAvailableFTSOSymbols()(string[])" --rpc-url coston2');
         console.log("-----------------------------------------------------------------");
         
+        console.log("\nFDC INTEGRATION:");
+        console.log("-----------------------------------------------------------------");
+        console.log("Status: READY (contract supports FDC proofs)");
+        console.log("Verification Contract:", FDC_VERIFICATION);
+        console.log("");
+        console.log("Test weather API:");
+        console.log("npm run fdc:test minas_gerais");
+        console.log("");
+        console.log("Create FDC attestation request:");
+        console.log("npm run fdc:create minas_gerais > attestation.json");
+        console.log("");
+        console.log("Submit weather proof (after FDC verification):");
+        console.log("cast send", address(weatherOracleWithFTSO), '"setWeatherDisruptionWithFDC((bytes32,bytes32,uint256,uint256,(string,string),(bytes)))" <PROOF> --rpc-url coston2 --private-key $PRIVATE_KEY');
+        console.log("");
+        console.log("See FDC_QUICKSTART.md for complete guide");
+        console.log("-----------------------------------------------------------------");
+        
+        console.log("\nENVIRONMENT VARIABLES (.env):");
+        console.log("-----------------------------------------------------------------");
+        console.log("# Add these to your .env file:");
+        console.log("WEATHER_ORACLE_ADDRESS=", address(weatherOracleWithFTSO));
+        console.log("AGRI_HOOK_ADDRESS=", address(hook));
+        console.log("INSURANCE_VAULT_ADDRESS=", address(vault));
+        console.log("FBTC_ADDRESS=", address(fbtc));
+        console.log("COFFEE_ADDRESS=", address(coffee));
+        console.log("POOL_MANAGER_ADDRESS=", address(mockPoolManager));
+        console.log("OPENWEATHER_API_KEY=your_key_here");
+        console.log("-----------------------------------------------------------------");
+        
         console.log("\nNEXT STEPS:");
         console.log("-----------------------------------------------------------------");
-        console.log("1. Copy contract addresses to your frontend");
+        console.log("1. Update .env with deployed addresses");
         console.log("2. Test FTSO price updates");
-        console.log("3. Create test insurance policies");
-        console.log("4. Simulate weather events");
-        console.log("5. Test claim payouts");
-        console.log("6. Test AgriHook with MockPoolManager");
-        console.log("7. Replace MockPoolManager with real Uniswap V4 (production)");
+        console.log("3. Test FDC weather integration (npm run fdc:test)");
+        console.log("4. Create test insurance policies");
+        console.log("5. Simulate weather events");
+        console.log("6. Test claim payouts");
+        console.log("7. Test AgriHook with MockPoolManager");
+        console.log("8. Replace MockPoolManager with real Uniswap V4 (production)");
+        console.log("-----------------------------------------------------------------");
+        
+        console.log("\nDOCUMENTATION:");
+        console.log("-----------------------------------------------------------------");
+        console.log("FDC Quick Start:  FDC_QUICKSTART.md");
+        console.log("FDC Full Guide:   FDC_INTEGRATION.md");
+        console.log("FDC Comparison:   FDC_COMPARISON.md");
+        console.log("Hook Deployment:  HOOK_DEPLOYMENT.md");
         console.log("-----------------------------------------------------------------");
         
         console.log("\n[SUCCESS] Deployment complete!");
