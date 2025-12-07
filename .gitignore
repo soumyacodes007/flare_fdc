@@ -1,19 +1,23 @@
 # Dependencies
 node_modules/
 package-lock.json
+yarn.lock
+pnpm-lock.yaml
 
 # Build outputs
 dist/
 build/
 out/
 *.tsbuildinfo
+.next/
+.nuxt/
+.turbo/
 
 # Environment variables
-# NOTE: .env is NOT ignored for hackathon team sharing
-# Uncomment .env below after hackathon for production security!
 .env
 .env.local
 .env.*.local
+.env.production
 
 # IDE/Editor
 .vscode/
@@ -22,6 +26,7 @@ out/
 *.swo
 *~
 .DS_Store
+*.sublime-*
 
 # Logs
 logs/
@@ -29,12 +34,13 @@ logs/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+lerna-debug.log*
+pnpm-debug.log*
 
 # Cache
 .cache/
-.turbo/
-.next/
-.nuxt/
+.eslintcache
+.stylelintcache
 
 # Blockchain/Solidity
 cache/
@@ -43,10 +49,35 @@ typechain/
 typechain-types/
 coverage/
 coverage.json
+broadcast/
+out/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+.venv
 
 # Testing
 .nyc_output/
+test-results/
+playwright-report/
 
 # Temporary files
 *.tmp
 .temp/
+*.swp
+*.bak
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Documentation
+docs/.vitepress/cache
+docs/.vitepress/dist

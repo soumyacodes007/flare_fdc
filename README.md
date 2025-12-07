@@ -167,55 +167,352 @@ AgriHook demonstrates **Oracle-Aware Liquidity** — a new DeFi primitive that m
 
 ---
 
-## 🏗️ Architecture
+## ✅ Verified Flare Integration
+
+All four Flare primitives are integrated and verified on Coston2 testnet:
+
+<table>
+<tr>
+<td width="50%">
+
+**FTSO Integration Proof**
+
+![FTSO Integration](./frontend/public/ftsointegrationproof.png)
+
+*Live Bitcoin price: $89,550 from Flare FTSO*
+
+**Verification Script:**
+```bash
+cd packages/contracts
+python test_ftso_fdc.py
+```
+
+</td>
+<td width="50%">
+
+**FDC Integration Proof**
+
+![FDC Integration](./frontend/public/fdcintegration.png)
+
+*Weather oracle with drought detection at 50% severity*
+
+**Verification Script:**
+```bash
+cd packages/contracts
+python test_ftso_fdc.py
+```
+
+</td>
+</tr>
+<tr>
+<td width="50%">
+
+**FAssets Integration Proof**
+
+![FAssets Integration](./frontend/public/fbtcintegration.png)
+
+*FBTC token (1M supply) ready for collateral*
+
+**Verification Script:**
+```bash
+cd packages/contracts
+python test_fassets.py
+```
+
+</td>
+<td width="50%">
+
+**AgriHook Frontend UI**
+
+![AgriHook UI](./frontend/public/image.png)
+
+*Complete demo interface with farmer cards, bot simulation, and live transactions*
+
+**Run Frontend:**
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+</td>
+</tr>
+</table>
+
+---
+
+## 📁 Project Structure
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                    FLARE PRIMITIVES LAYER                   │
-├─────────────────────────────────────────────────────────────┤
-│  FDC          FTSO         FAssets      Smart Accounts      │
-│  (Weather)    (Prices)     (BTC→FBTC)   (XRPL→Flare)       │
-└────────┬──────────┬──────────┬──────────┬───────────────────┘
-         │          │          │          │
-         ▼          ▼          ▼          ▼
-┌─────────────────────────────────────────────────────────────┐
-│                    AGRIHOOK PROTOCOL                        │
-├─────────────────────────────────────────────────────────────┤
-│                                                             │
-│  ┌──────────────────┐      ┌──────────────────┐           │
-│  │  Weather Oracle  │◄─────┤  Insurance Vault │           │
-│  │  (FDC + FTSO)    │      │  (Policies)      │           │
-│  └────────┬─────────┘      └──────────────────┘           │
-│           │                                                 │
-│           ▼                                                 │
-│  ┌──────────────────────────────────────────┐             │
-│  │         Uniswap V4 Hook                  │             │
-│  │  • Dynamic Fees (MEV Capture)            │             │
-│  │  • Circuit Breakers (Market Protection)  │             │
-│  │  • Quadratic Bonuses (Aligned Traders)   │             │
-│  └──────────────────────────────────────────┘             │
-│                                                             │
-└─────────────────────────────────────────────────────────────┘
-         │
-         ▼
-┌─────────────────────────────────────────────────────────────┐
-│                    COFFEE/FBTC POOL                         │
-│  Liquidity providers earn fees + protect farmers            │
-└─────────────────────────────────────────────────────────────┘
+agrihook/
+├── packages/
+│   └── contracts/                    # Smart contracts
+│       ├── src/
+│       │   ├── AgriHook.sol         # Uniswap V4 hook with dynamic fees
+│       │   ├── WeatherOracleWithFTSO.sol  # FTSO + FDC integration
+│       │   ├── InsuranceVault.sol   # Policy management & payouts
+│       │   ├── CoffeeToken.sol      # Commodity token
+│       │   └── MockFBTC.sol         # FAsset mock for testing
+│       ├── script/
+│       │   ├── DeployAllCoston2.s.sol     # Full deployment script
+│       │   └── DeployHookCREATE2.s.sol    # Hook deployment
+│       ├── test/                    # Foundry tests
+│       ├── test_ftso_fdc.py        # ✅ FTSO & FDC verification
+│       ├── test_fassets.py         # ✅ FAssets verification
+│       └── foundry.toml
+│
+├── smart-accounts-cli/              # Smart Accounts integration
+│   ├── src/
+│   │   ├── encoder.py              # XRPL memo encoding
+│   │   ├── flare_client.py         # Flare blockchain client
+│   │   ├── xrpl_client.py          # XRPL blockchain client
+│   │   └── registry.py             # Contract registry
+│   ├── smart_accounts.py           # Main CLI tool
+│   ├── agrihook_integration.py     # AgriHook-specific functions
+│   ├── agrihook_crosschain_real.py # ✅ Cross-chain verification
+│   ├── agrihook_live_demo.py       # Live demo with real txs
+│   └── bridge_watcher.py           # Monitor bridge status
+│
+├── frontend/                        # Next.js frontend
+│   ├── src/
+│   │   ├── app/
+│   │   │   ├── page.tsx            # Main demo page
+│   │   │   └── layout.tsx          # Root layout
+│   │   ├── components/
+│   │   │   ├── FarmerCard.tsx      # Policy creation UI
+│   │   │   ├── BotAttack.tsx       # MEV simulation
+│   │   │   ├── Toast.tsx           # Transaction notifications
+│   │   │   └── Terminal.tsx        # Live transaction log
+│   │   └── config/
+│   │       └── wagmi.ts            # Web3 configuration
+│   ├── public/
+│   │   ├── ftsointegrationproof.png  # FTSO verification screenshot
+│   │   ├── fdcintegration.png        # FDC verification screenshot
+│   │   └── fbtcintegration.png       # FAssets verification screenshot
+│   └── package.json
+│
+├── demo/                            # Standalone HTML demo
+│   ├── index.html                  # Glassmorphism UI
+│   ├── app.js                      # Demo logic
+│   └── styles.css                  # Styling
+│
+└── README.md                        # This file
 ```
 
 ---
 
-## 🎨 Features & Mathematical Innovations
+## 🏗️ Architecture
+
+### System Overview
+
+```mermaid
+graph TB
+    subgraph "USER LAYER"
+        A[👨‍🌾 Farmer João<br/>WhatsApp Interface]
+        B[🤖 Arbitrage Bot<br/>MEV Searcher]
+        C[💰 Rebalancer Alice<br/>Capital Provider]
+    end
+    
+    subgraph "APPLICATION LAYER"
+        D[🌐 Web Frontend<br/>Next.js + wagmi]
+        E[⚙️ Backend API<br/>Wallet Abstraction]
+    end
+    
+    subgraph "FLARE NETWORK - SMART CONTRACTS"
+        F[🪝 AgriHook.sol<br/>Uniswap v4 Hook]
+        G[🏦 InsuranceVault.sol<br/>Claim Processing]
+        H[🌡️ WeatherOracle.sol<br/>FDC Integration]
+        I[💱 Coffee/USDC Pool<br/>Uniswap v4 Pool]
+    end
+    
+    subgraph "FLARE ORACLES"
+        J[📊 FTSO<br/>Price Feeds]
+        K[🛰️ FDC<br/>Data Connector]
+    end
+    
+    subgraph "EXTERNAL DATA"
+        L[🌦️ OpenWeatherMap<br/>API]
+        M[🌦️ WeatherAPI.com<br/>API]
+        N[🌦️ VisualCrossing<br/>API]
+        O[📈 Binance<br/>Coffee Price]
+    end
+    
+    subgraph "ATTESTATION LAYER"
+        P[🔐 200 Flare Nodes<br/>Consensus Verification]
+    end
+    
+    %% User connections
+    A -->|1. Enroll & Pay Premium| D
+    A -->|6. Claim Payout| D
+    B -->|4. Attempt Arbitrage| I
+    C -->|5. Deposit to Rebalance| I
+    
+    %% Frontend to backend
+    D --> E
+    
+    %% Backend to contracts
+    E -->|Create Policy| G
+    E -->|Request Weather| H
+    E -->|Claim Trigger| G
+    
+    %% Contract interactions
+    F <-->|beforeSwap hook| I
+    F -->|Get Adjusted Price| H
+    F -->|Get Market Price| J
+    G -->|Verify Drought| H
+    G -->|Pay Farmer| A
+    I -->|Fee Revenue 60%| G
+    
+    %% Oracle layer
+    H -->|Request Attestation| K
+    J -->|Query Price| O
+    
+    %% FDC to external APIs
+    K -->|Query 1| L
+    K -->|Query 2| M
+    K -->|Query 3| N
+    
+    %% Attestation
+    L --> P
+    M --> P
+    N --> P
+    P -->|Merkle Proof| K
+    K -->|Weather Data| H
+    
+    style A fill:#e1f5ff,stroke:#01579b,stroke-width:2px
+    style B fill:#e1f5ff,stroke:#01579b,stroke-width:2px
+    style C fill:#e1f5ff,stroke:#01579b,stroke-width:2px
+    style D fill:#fff3e0,stroke:#e65100,stroke-width:2px
+    style E fill:#fff3e0,stroke:#e65100,stroke-width:2px
+    style F fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+    style G fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+    style H fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+    style I fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+    style J fill:#e8f5e9,stroke:#1b5e20,stroke-width:2px
+    style K fill:#e8f5e9,stroke:#1b5e20,stroke-width:2px
+    style L fill:#fce4ec,stroke:#880e4f,stroke-width:2px
+    style M fill:#fce4ec,stroke:#880e4f,stroke-width:2px
+    style N fill:#fce4ec,stroke:#880e4f,stroke-width:2px
+    style O fill:#fce4ec,stroke:#880e4f,stroke-width:2px
+    style P fill:#fff9c4,stroke:#f57f17,stroke-width:2px
+```
+
+### Bot Attack Flow
+
+```mermaid
+sequenceDiagram
+    actor Bot as 🤖 MEV Bot
+    participant Pool as 💱 Uniswap Pool
+    participant Hook as 🪝 AgriHook
+    participant Oracle as 🌡️ Weather Oracle
+    participant FTSO as 📊 FTSO Price Feed
+    participant Vault as 🏦 Vault
+    
+    Note over Bot,Vault: DROULD RISE
+  
+    Oracle->>Oracle: Weather: DROUGHT 
+
+    Note over Bot,Vault: BOT SEES OPPORTUNITY
+   
+    Bot->>Bo50!
+    
+    Bot->>Pool: swap()<br/>Buy 1000 COFFEE at $5
+r
+    
+   ES
+    
+    Hook->>Pool: getCurrentPrice()
+    Pool-->>Hook: Pool price = $5.
+    
+   EE")
+
+    
+()
+    Oracle-->>Hook: isDrought = true150%
+    
+    Hook->>Hook: Calculate adjust $7.50
+    
+    Hook->>Hook: Calculate gap:<0%
+    
+
+        Hook->>Pool: setDynamicFee(gap%)<br/>Allow swap
+0%
+   
+0
+        Hook->>Vault: Send 50% of 5
+> 100%
+        Hook->>Pool: REVERT swap ❌
+)"
+        Bot-
+
+        Pool->>Vault: Send 50% → $3,750
+    end
+    
+   
+    
+    Bot->>Bot: Sells on Binance: $7,500
+    Bot->>Bot: Ne
+    
+    Note over Bot
+```
+
+### Flow
+
+```mermaid
+m
+    actor Alice as 💰 Rebalancer Alice
+   
+    participa
+    participa
+    partici Vault
+    
+    Note over Alice,Vault: POOL IS
+   
+ ❌
+    
+    400%
+    
+    Note overNITY
+    
+    Alice-eded()
+    Hook-->>Alice: Gap: 400%<br/>R$30,900
+    
+   
+    
+    Alice->>Pool: rebalancePool()<br/>DepoSDC
+    
+    Pool->>Ho
+    
+    Hook->>H
+    
+    Hook->>Hook: New gap:<br/>($5.00 - $4.80) / $4.80<br/ 4.2% ✓
+    
+L ✓
+    
+lue
+    
+
+    
+0
+    
+    Alice->>Alice: Total received:<9k
+    
+    Pool->>Pool: Status: UNFROZEN ✓<br/>Trading resumes
+    
+
+```
+
+---
+
+## onsal Innovatiematices & Math🎨 Featuraincted agrmers prote Fak<br/>✅ $30.9e profits fixed, Alict: ✅ Poolce,Vauler Ali   Note ov = $648./><br $30.9k cashk LP +$618br/>s: $30,90onue: Pay bicault->>Al    Vr/>= $30,900pped at 5%<b/>Ca%<br10,000 = 16² / 00<br/>4 bonus:culateal>>Hook: Ck-   Hoo  vans: $618kokeLP t Mint e:Alicool->>    PEZE POORE>UNF 100%<br/k: Gap <Hook->>Hoo    >=0 → $4.80$1.0ce<br/>shifts prik $618e:<br/>e new priculatook: CalcLiquidity()Add: beforeok$618,000 Ut: si DO IT!on:<br/>Decisimin0.9k in 10 fit: $3r/>Pro$648.9k<bk: bac8k<br/>Get eposit: $61fit:<br/>Dulate proce: Calcce->>Ali Aliped) = s: 5% (capbr/>Bonu8,000<al: $61pituired caeqanceNekRebalok: chec>>HoPPORTU SEES OCEVault: ALIAlice, <br/>Gap:: $5.00cle priceacle: Ora>>Orracle- OZENtatus: FRO>S.00<br/ce: $1r/>Pri<btate:rent s>Pool: Cur    Pool->  > 100%)N (Gap FROZEt Vault as 🏦panOraclether  as 🌡️ Weat OraclenriHooks 🪝 Agnt Hook aswap Poolol as 💱 Uni Popanttici pareDiagrasequencool Recovery Pr payoutsfo$3,750 Vault gets />💰 d<br protecteLP tokenss  ✅ Farmer',Vault:it: $0 ❌oft prSULT BOT REot,Vault:ote over B N = $7,50000 × $7.50ost: 10l->>Bot: C       Poo 000)rice(1tOraclePyAbu>>Pool: clePrice(OrauyAtUse b Error: "ook-->>Bot:        He Gap     els1.2fee → $.5= $750 : $5 + $2. pays>>Hook: Botook- H        feeull gap/>Charge fFee(gap%)<br: setDynamic>Pool   Hook->  e Gap 50-10    elsGap < 50%lt     a= 5.00<br/> $5$5.00) /7.50 - r/>($b × 1.50 =<br/>$5.00 price:edr = >Multipliebr/<ataerDeathtW geOracle: Hook->>   rice = $5.00arket p-->>Hook: M   FTSO ce("COFF: getPri Hook->>FTSO00ACTIVATION PROTECTok:  HoNote over p() triggewareSHook: befoPool->>    trage: $2.bibr/>Are: $7.50<br/>Binanc00<$5.br/>Pool: k prices:< Chect:      trueht =rougsD✓<br/>i  → PRICE SHOUD GHT DETECTE
 
 ### 1. Weather-Adjusted Oracle Pricing
 
 **What It Does:** Predicts price movements before they happen on exchanges by combining market prices with weather conditions.
 
 **Formula:**
-```
-Adjusted Price = Base Market Price × Weather Multiplier
-```
+
+$$\text{Adjusted Price} = \text{Base Market Price} \times \text{Weather Multiplier}$$
 
 **Example:**
 ```
@@ -243,9 +540,8 @@ Adjusted Price = Base Market Price × Weather Multiplier
 **What It Does:** Charges traders a fee equal to their unfair advantage, making pure arbitrage exploitation unprofitable.
 
 **Formula:**
-```
-Dynamic Fee = (Oracle Price - Pool Price) / Pool Price × 100%
-```
+
+$$\text{Dynamic Fee} = \frac{\text{Oracle Price} - \text{Pool Price}}{\text{Pool Price}} \times 100\%$$
 
 **Core Example:**
 ```
@@ -311,9 +607,8 @@ Gap:    400%
 **What It Does:** Rewards traders who help close large mispricings, with rewards growing faster than linearly as the problem gets worse.
 
 **Formula:**
-```
-Bonus = Deviation² / 10,000
-```
+
+$$\text{Bonus} = \frac{\text{Deviation}^2}{10{,}000}$$
 Capped at 5% maximum.
 
 **Examples:**
@@ -376,9 +671,8 @@ AGRI-HOOK:
 **What It Does:** Adjusts premiums in real time based on live weather plus historical drought risk.
 
 **Formula:**
-```
-Final Premium = Base Premium × Risk Multiplier × Utilization Multiplier
-```
+
+$$\text{Final Premium} = \text{Base Premium} \times \text{Risk Multiplier} \times \text{Utilization Multiplier}$$
 
 **Example: João's Farm — Minas Gerais, Brazil**
 
@@ -490,9 +784,8 @@ Cryptographic proof:
 **What It Does:** Calculates exactly how much capital is needed to unfreeze a circuit-breaker-locked pool and restore the target oracle price.
 
 **Formula:**
-```
-Required Capital = Current Liquidity × (√Target Price - √Current Price)
-```
+
+$$\text{Required Capital} = \text{Current Liquidity} \times \left(\sqrt{\text{Target Price}} - \sqrt{\text{Current Price}}\right)$$
 
 **Worked Example (Frozen Pool):**
 ```
@@ -765,3 +1058,61 @@ Built with:
 - Foundry + Solidity
 
 **Making DeFi markets react to reality.**
+
+
+### Bot Attack Flow
+
+```mermaid
+sequenceDiagram
+    actor Bot as 🤖 MEV Bot
+    participant Pool as 💱 Uniswap Pool
+    participant Hook as 🪝 AgriHook
+    participant Oracle as 🌡️ Weather Oracle
+    participant FTSO as 📊 FTSO
+    participant Vault as 🏦 Vault
+    
+    Note over Bot,Vault: DROUGHT DETECTED → PRICE SHOULD RISE
+    Oracle->>Oracle: isDrought = true
+    
+    Bot->>Bot: Pool: $5.00 | Binance: $7.50<br/>Arbitrage: $2.50!
+    Bot->>Pool: swap() Buy 1000 COFFEE
+    Pool->>Hook: beforeSwap()
+    
+    Hook->>Pool: getCurrentPrice() → $5.00
+    Hook->>FTSO: getPrice() → $5.00
+    Hook->>Oracle: getWeatherData() → Drought 150%
+    Hook->>Hook: Adjusted: $5.00 × 1.50 = $7.50<br/>Gap: 50%
+    
+    Hook->>Pool: Charge 50% fee = $2.50
+    Hook->>Vault: Send $1.25 to treasury
+    
+    Bot->>Bot: Total cost: $7.50<br/>Sells at: $7.50<br/>Profit: $0 ❌
+    
+    Note over Bot,Vault: ✅ LP protected | 💰 Vault funded
+```
+
+### Pool Recovery Flow
+
+```mermaid
+sequenceDiagram
+    actor Alice as 💰 Rebalancer
+    participant Pool as 💱 Pool
+    participant Hook as 🪝 AgriHook
+    participant Vault as 🏦 Vault
+    
+    Note over Alice,Vault: POOL FROZEN (Gap > 100%)
+    Pool->>Pool: Price: $1.00 | Status: FROZEN
+    
+    Alice->>Hook: checkRebalanceNeeded()
+    Hook-->>Alice: Need $618k | Bonus: 5% = $30.9k
+    
+    Alice->>Pool: Deposit $618,000
+    Pool->>Hook: beforeAddLiquidity()
+    Hook->>Hook: New price: $4.80<br/>Gap: 4.2% ✓
+    Hook->>Pool: UNFREEZE ✓
+    
+    Pool->>Alice: LP tokens: $618k
+    Vault->>Alice: Bonus: $30.9k
+    
+    Note over Alice,Vault: ✅ Pool fixed | Alice profits $30.9k
+```

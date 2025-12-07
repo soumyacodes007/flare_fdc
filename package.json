@@ -1,26 +1,45 @@
 {
-  "name": "agri-hook",
+  "name": "agrihook",
   "version": "1.0.0",
   "private": true,
-  "description": "Agri-Hook - Trustless Agricultural Hedging via Dynamic AMM Protection",
+  "description": "AgriHook - The Protocol for Oracle-Aware Liquidity. Makes DeFi markets react to reality faster than CEXs via Flare.",
   "workspaces": [
     "packages/*"
   ],
   "scripts": {
     "build": "cd packages/contracts && forge build",
     "test": "cd packages/contracts && forge test",
-    "weather": "cd packages/contracts && python scripts/weather-api/fetch_weather_data.py",
+    "test:ftso": "cd packages/contracts && python test_ftso_fdc.py",
+    "test:fassets": "cd packages/contracts && python test_fassets.py",
+    "test:crosschain": "cd smart-accounts-cli && python agrihook_crosschain_real.py status",
+    "frontend": "cd frontend && npm run dev",
+    "demo": "cd demo && python -m http.server 8000",
     "clean": "cd packages/contracts && forge clean"
   },
   "keywords": [
-    "agri-hook",
+    "agrihook",
+    "oracle-aware-liquidity",
     "uniswap-v4",
-    "flare",
+    "flare-network",
+    "ftso",
+    "fdc",
+    "fassets",
+    "smart-accounts",
     "defi",
     "agricultural-insurance",
     "weather-oracle",
-    "hackathon"
+    "mev-protection",
+    "dynamic-fees",
+    "circuit-breaker"
   ],
-  "author": "Agri-Hook Team",
-  "license": "MIT"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/agrihook/agrihook"
+  },
+  "author": "AgriHook Team",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  }
 }
