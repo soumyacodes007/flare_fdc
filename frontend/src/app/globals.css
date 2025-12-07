@@ -1,0 +1,112 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #0a0a0f;
+  --card: #111118;
+  --border: #222233;
+  --accent: #00d4aa;
+  --danger: #ff3355;
+  --warning: #ffaa00;
+}
+
+body {
+  background: var(--bg);
+  color: white;
+  font-family: 'Inter', -apple-system, sans-serif;
+}
+
+.crisis-mode {
+  background: linear-gradient(135deg, #0a0a0f 0%, #1a0808 100%);
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+@keyframes glow {
+  0%, 100% { box-shadow: 0 0 10px rgba(0, 212, 170, 0.3); }
+  50% { box-shadow: 0 0 30px rgba(0, 212, 170, 0.5); }
+}
+
+@keyframes danger-glow {
+  0%, 100% { box-shadow: 0 0 10px rgba(255, 51, 85, 0.3); }
+  50% { box-shadow: 0 0 30px rgba(255, 51, 85, 0.5); }
+}
+
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+.animate-pulse-slow {
+  animation: pulse 2s infinite;
+}
+
+.animate-glow {
+  animation: glow 2s infinite;
+}
+
+.animate-danger-glow {
+  animation: danger-glow 1s infinite;
+}
+
+.animate-slide-up {
+  animation: slide-up 0.3s ease-out;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out;
+}
+
+.animate-shake {
+  animation: shake 0.5s ease-in-out;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
+}
+
+/* Button hover effects */
+button:not(:disabled):hover {
+  transform: translateY(-1px);
+}
+
+button:not(:disabled):active {
+  transform: translateY(0);
+}
+
+/* Card hover effects */
+.hover-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+  transition: all 0.2s ease;
+}

@@ -1,0 +1,189 @@
+{
+  "timestamp": "2025-12-06T19:28:44.690Z",
+  "network": "coston2",
+  "contracts": {
+    "AGRI_HOOK": "0x0FA2Ea09a870BF42Dd05DB7446a14204489780C0",
+    "WEATHER_ORACLE": "0x223163b9109e43BdA9d719DF1e7E584d781b93fd",
+    "INSURANCE_VAULT": "0x6c6ad692489a89514bD4C8e9344a0Bc387c32438",
+    "POOL_MANAGER": "0x513be19378C375466e29D6b4d001E995FBA8c2ce",
+    "FBTC": "0x8C691A99478D3b3fE039f777650C095578debF12",
+    "COFFEE": "0x0cd5af44F36bCD3B09f9f70aFA9cf6A101d4bc0c"
+  },
+  "summary": {
+    "total": 34,
+    "passed": 34,
+    "failed": 0
+  },
+  "tests": [
+    {
+      "name": "AgriHook deployed",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "WeatherOracle deployed",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "InsuranceVault deployed",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Oracle address correct",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "beforeSwap enabled",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "afterSwap enabled",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "beforeInitialize disabled",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Recovery threshold = 50%",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Circuit breaker threshold = 100%",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Aligned fee = 0.01%",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Base fee = 0.3%",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Max misaligned fee = 10%",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Max bonus rate = 5%",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Cached price > 0",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Price has been updated",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Oracle base price > 0",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Theoretical price > 0",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Weather event readable",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Deviation 0% when prices equal",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Deviation 50% when pool 50% higher",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Deviation 50% when pool 50% lower",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Seller aligned when pool price high",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Buyer misaligned when pool price high",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Buyer aligned when pool price low",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Seller misaligned when pool price low",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Normal mode at 25% deviation",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Recovery mode at 75% deviation",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Circuit breaker at 150% deviation",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "updatePriceFromOracle",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "fundTreasury",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Drought simulation",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Weather cleared",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "beforeSwap flag set in address",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "afterSwap flag set in address",
+      "passed": true,
+      "details": ""
+    }
+  ]
+}

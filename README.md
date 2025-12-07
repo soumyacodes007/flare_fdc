@@ -56,9 +56,10 @@ A Uniswap V4 Hook that protects coffee farmers by:
 - ✅ ~~No liquidity pool initialized yet~~ **DONE**
 - ✅ ~~Hook not registered with PoolManager~~ **DONE** (using MockPoolManager)
 - ✅ ~~No test swaps executed~~ **DONE**
-- ❌ FDC (Flare Data Connector) integration incomplete
-- ❌ Cross-chain messaging not implemented
+- ✅ ~~FDC (Flare Data Connector) integration incomplete~~ **DONE** (Smart Accounts use FDC)
+- ✅ ~~Cross-chain messaging not implemented~~ **DONE** (XRPL → Flare via Smart Accounts)
 - ✅ Demo frontend exists (demo/)
+- ✅ Next.js frontend with RainbowKit (frontend/)
 
 ### Smart Contract Gaps
 - ❌ Bonus token transfers not implemented (TODO in AgriHook)

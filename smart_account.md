@@ -1,0 +1,175 @@
+INTRO 
+Flare Smart Accounts
+The Flare Smart Accounts is an account abstraction that allows XRPL users to perform actions on the Flare chain without owning any FLR token. Each XRPL address is assigned a unique smart account on the Flare chain, which only it can control. They do so through Payment transactions on the XRPL. The Flare Smart Accounts are especially useful as a way of interacting with the FAssets workflow.
+
+Workflow
+The workflow for Flare Smart Accounts is comprised of the following steps.
+
+The XRPL user sends instructions as a Payment transaction to a specific XRPL address, with instructions encoded as the payment reference in the memo field.
+The operator interacts with the Flare Data Connector to procure a Payment proof. It then calls the executeTransaction function on the MasterAccountController contract, with the Payment proof and the XRPL address that made the transaction.
+The XRPL user's smart account performs the actions given in the instructions.
+1. Instructions on XRPL
+The Flare Smart Accounts allow XRPL users to perform actions on the Flare chain through instructions on the XRPL. This is done through a Payment to an XRPL address, designated by the operator - a backend monitoring incoming transactions and interacting with the Flare chain. The payment must transfer sufficient funds, as specified by the operator, and must include the proper payment receipt in the memo field.
+
+The payment receipt is a bytes32 value. The first byte is reserved for the instruction code, a byte representation of a two-digit number. The remaining 31 bytes are the parameters for the chosen instruction.
+
+In practice, the payment receipt should be prepared by a backend, through a web form.
+
+Table of instruction IDs and corresponding actions.
+2. Payment proof on Flare
+The operator monitors incoming transactions to the specified XRPL address. Upon receiving a payment, it makes a Payment attestation request to the FDC. The Payment proof and the user's XRPL address are passed to the executeTransaction function on the MasterAccountController smart contract on the Flare chain.
+
+The MasterAccountController contract first verifies the proof. It then performs several checks on the proof:
+
+receiving address matches the one specified by the operator,
+the source address matches the XRPL address given to the function,
+that the proof has not yet been used for the same actions.
+Then, the MasterAccountController contract retrieves the XRPL user's smart account from a mapping. If the account does not yet exist, it is created at this point.
+
+The payment reference is decoded. Depending on the value of the leading byte, a different function on the smart account is called.
+
+3. Actions on Flare
+The XRPL user's smart account performs the actions in the instructions.
+
+Tags:quickstart
+
+
+
+GUIDE: 
+Flare Smart Accounts CLI
+The Flare Smart Accounts CLI is a tool written in Python that streamlines the Flare Smart Accounts process by properly structuring and sending XRPL transactions/instructions. It has commands corresponding to each Flare Smart Accounts action (table of instructions), as well as other useful debugging features.
+
+note
+The CLI executes only the transaction on XRPL. It does not bridge the instructions to Flare. That is done by the operator - a service that Flare runs.
+
+To use the CLI, first clone the repository and install the necessary dependencies:
+
+git clone https://github.com/flare-foundation/smart-accounts-cli.git
+cd smart-accounts-cli
+pip install -r requirements.txt
+
+Copy the .env.example file to the .env file, and fill in the missing values in the latter.
+
+cp .env.example .env
+
+The missing values are an XRPL testnet account secret value, a Flare address private key, and the RPC URLs for both Flare's Coston2 and XRPL testnet. You can create a new secret string through the XRP faucets.
+
+You can then run the script with the command:
+
+smart_accounts [-h] [--version] {bridge,debug} ...
+
+encode command
+The encode command prints encoded memo fields that can be used in XRPL transactions to instruct the operator to perform certain actions on Flare. It allows for the following positional arguments: deposit, withdraw, redeem, mint, claim-withdraw, and custom. The command produces a payment reference corresponding to each instruction type.
+
+For example, the following command
+
+./smart_accounts.py encode deposit -a 1
+
+would result in the payment reference 0100000000000000000000000000000000000000000000000000000000000001. The first 01 here signals that it is a deposit instruction, while the remaining bytes give the amount - in this case 1.
+
+bridge command
+The bridge command executes an XRPL transaction with instructions for one of the actions, determined by the positional argument provided. A payment transaction with the appropriate memo field value is sent to the operator's XRPL address from the XRPL address specified in the .env file.
+
+What follows is a list of possible positional arguments, what they do, and the additional parameters of each.
+
+deposit
+Deposit an amount of FXRP from the smart account belonging to the XRPL address to the Firelight vault, designated by the MasterAccountController contract.
+
+./smart_accounts.py bridge deposit -a <amount>
+
+withdraw
+Begin the withdrawal process from the Firelight vault. An amount of FXRP is marked to be withdrawn from the Firelight vault to the user's smart account.
+
+./smart_accounts.py bridge withdraw -a <amount>
+
+redeem
+Redeem a lots amount of FXRP. That number of lots of FXRP are burned from the user's smart account, and the same amount of XRP is sent to the user's address on XRPL.
+
+./smart_accounts.py bridge redeem -l <lots>
+
+mint
+Mints a number of lots of FXRP to the user's smart account. The script first reserves collateral with the agent with the address, by sending a reserveCollateral instruction. It then sends a lots amount of XRP to the agent's underlying address. An executor, determined by the MasterAccountController, will complete the minting process, and lots of FXRP will be minted to the user's smart account.
+
+./smart_accounts.py bridge mint -a <address> -l <lots>
+
+info
+On Coston2, you can use 0x55c815260cBE6c45Fe5bFe5FF32E3C7D746f14dC as the agent address.
+
+claim-withdraw
+Complete the withdrawal process from the Firelight vault by claiming the funds. After the withdrawal process has been started, the funds are locked for a certain amount of time. Once that period has passed, they can be transferred back to the user's smart account.
+
+./smart_accounts.py bridge claim-withdraw
+
+custom
+Execute a custom action on the Flare chain. Make a transaction to the address, paying the value, and attaching the calldata. The calldata is the encoding of a function and its argument values, on the smart contract at the `address.
+
+./smart_accounts.py bridge custom -a <address> -v <value> -d <calldata>
+
+Before making a transaction on XRPL with the necessary instructions, this command performs an additional step. It first packs the three provided values (address, value, and calldata) into a IMasterAccountController.CustomInstruction struct. Then, it calls the registerCustomInstruction function of the MasterAccountController contract, with the former as an argument.
+
+Thus, it both registers a custom instruction with the MasterAccountController contract and retrieves the required callHash, which it can then send to the operator's XRPL address as instructions.
+
+Instead of the address, value and calldata parameters, a JSON file with an array of custom instructions can be used. The command then reads as follows:
+
+./smart_accounts.py bridge custom <json_file>
+
+personal-account command
+The personal-account command gives insight into personal accounts of XRPL addresses.
+
+It allows for the following positional arguments: print and faucet.
+
+print
+Prints the Flare address of the personal account belonging to the xrpl_address.
+
+./smart_accounts.py personal-account print <xrpl_address>
+
+faucet
+Prints the Flare address of the personal account belonging to the xrpl_address and the faucet instructions. In the future, it will faucet funds to the address instead.
+
+./smart_accounts.py personal-account faucet <xrpl_address>
+
+debug command
+The debug command offers some utility options for running the CLI. It allows three positional arguments: mock-custom, check-status, and simulation.
+
+mock-print
+Prints the Flare address of the personal account created by the mock MasterAccountController contract from the seed string. The personal account is created by the createFundPersonalAccount developer function. It represents the XRPL "address" of the concatenated string of msg.sender and seed. This allows for easier creation of multiple personal accounts with invocative names, for easier development.
+
+./smart_accounts.py debug mock-print -s <seed>
+
+mock-create-fund
+Creates a personal account for the seed address string through the MasterAccountController contract, and sends to it the value amount. The personal account is created by the createFundPersonalAccount developer function. It represents the XRPL "address" of the concatenated string of msg.sender and seed. This allows for easier creation of multiple personal accounts with invocative names, for easier development.
+
+./smart_accounts.py debug mock-create-fund -s <seed> -v <value>
+
+The value can be expressed as as flr (ex. 42flr).
+
+mock-custom
+Simulate a custom instruction with the mock MasterAccountController contract. Instead of sending the instructions as a transaction on XRPL and bridging them to Flare, the custom instructions are sent to the MasterAccountController contract directly. This is explained in more detail in the Custom instructions guide.
+
+The address, value, and data parameters are the same as for the custom positional argument. The seed is a string representing an XRPL account.
+
+./smart_accounts.py debug mock-custom -s <seed> -a <address> -v <value> -d <calldata>
+
+As with the custom command, a JSON file containing an array of custom instructions can be used.
+
+./smart_accounts.py debug mock-custom -s <seed> <json_file>
+
+check-status
+Check the status of the XRPL transaction with the xrpl_hash.
+
+./smart_accounts.py debug check-status <xrpl_hash>
+
+simulation
+Run the simulation of the FAsset cycle. It converts mint lots of XRP to FXRP, deposits deposit FXRP into the Firelight vault, withdraws deposit FXRP back to the smart account, and finally redeems mint FXRP back to XRP.
+
+./smart_accounts.py debug simulations -a <address> -m <mint> -d <deposit>
+
+This is equivalent to running the following commands:
+
+./smart_accounts.py bridge mint -a <address> -l <mint>
+./smart_accounts.py bridge deposit -a <deposit>
+./smart_accounts.py bridge withdraw -a <deposit>
+./smart_accounts.py bridge claim-withdraw
+./smart_accounts.py bridge redeem -l <mint>
+
+Tags:intermediateethereumflare-smart-accounts
