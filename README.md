@@ -408,103 +408,105 @@ sequenceDiagram
     participant FTSO as 📊 FTSO Price Feed
     participant Vault as 🏦 Vault
     
-    Note over Bot,Vault: DROULD RISE
-  
-    Oracle->>Oracle: Weather: DROUGHT 
-
-    Note over Bot,Vault: BOT SEES OPPORTUNITY
-   
-    Bot->>Bo50!
+    Note over Bot,Vault: DROUGHT DETECTED - PRICE SHOULD RISE
+    Oracle->>Oracle: Weather: DROUGHT detected
     
-    Bot->>Pool: swap()<br/>Buy 1000 COFFEE at $5
-r
+    Note over Bot,Vault: BOT SEES ARBITRAGE OPPORTUNITY
+    Bot->>Bot: Check prices
+    Bot->>Bot: Pool: $5.00, Binance: $7.50
+    Bot->>Bot: Arbitrage: $2.50/unit
     
-   ES
+    Bot->>Pool: swap() - Buy 1000 COFFEE at $5
     
+    Note over Hook: HOOK PROTECTION ACTIVATES
+    Pool->>Hook: beforeSwap() triggered
     Hook->>Pool: getCurrentPrice()
-    Pool-->>Hook: Pool price = $5.
+    Pool-->>Hook: Pool price = $5.00
+    Hook->>FTSO: getPrice(COFFEE)
+    FTSO-->>Hook: Market price = $5.00
+    Hook->>Oracle: getWeatherData()
+    Oracle-->>Hook: isDrought = true
+    Hook->>Hook: Calculate adjusted price
+    Note over Hook: $5.00 × 1.50 = $7.50
+    Hook->>Hook: Calculate gap
+    Note over Hook: ($7.50 - $5.00) / $5.00 = 50%
     
-   EE")
-
-    
-()
-    Oracle-->>Hook: isDrought = true150%
-    
-    Hook->>Hook: Calculate adjust $7.50
-    
-    Hook->>Hook: Calculate gap:<0%
-    
-
-        Hook->>Pool: setDynamicFee(gap%)<br/>Allow swap
-0%
-   
-0
-        Hook->>Vault: Send 50% of 5
-> 100%
-        Hook->>Pool: REVERT swap ❌
-)"
-        Bot-
-
-        Pool->>Vault: Send 50% → $3,750
+    alt Gap < 50%
+        Hook->>Pool: setDynamicFee(gap%)
+        Note over Hook: Allow swap with fee
+    else Gap 50-100%
+        Hook->>Pool: setDynamicFee(gap%)
+        Note over Hook: Charge full gap fee
+        Hook->>Vault: Send 50% of fee to treasury
+    else Gap > 100%
+        Hook->>Pool: REVERT swap
+        Note over Hook: Circuit breaker activated
     end
     
-   
+    Pool->>Vault: Send 50% fee → $2,500
     
+    Note over Bot,Vault: BOT RESULT
+    Bot->>Bot: Cost: 1000 × $7.50 = $7,500
     Bot->>Bot: Sells on Binance: $7,500
-    Bot->>Bot: Ne
+    Bot->>Bot: Net profit: $0
     
-    Note over Bot
+    Note over Bot,Vault: RESULT
+    Note over Bot: ❌ Bot profit: $0
+    Note over Vault: ✅ Vault gets $2,500
+    Note over Vault: ✅ Farmers protected
 ```
 
-### Flow
+### Pool Recovery Flow
 
 ```mermaid
-m
+sequenceDiagram
     actor Alice as 💰 Rebalancer Alice
-   
-    participa
-    participa
-    partici Vault
+    participant Pool as 💱 Uniswap Pool
+    participant Hook as 🪝 AgriHook
+    participant Oracle as 🌡️ Weather Oracle
+    participant Vault as 🏦 Vault
     
-    Note over Alice,Vault: POOL IS
-   
- ❌
+    Note over Alice,Vault: POOL IS FROZEN (Gap > 100%)
+    Pool->>Pool: Current state
+    Note over Pool: Price: $1.00, Status: FROZEN
+    Oracle->>Oracle: Oracle price: $5.00
+    Note over Oracle: Gap: 400%
     
-    400%
+    Note over Alice,Vault: ALICE SEES OPPORTUNITY
+    Alice->>Hook: checkRebalanceNeeded()
+    Hook-->>Alice: Gap: 400%, Required: $618,000, Bonus: $30,900
     
-    Note overNITY
+    Alice->>Alice: Decision: DO IT!
+    Note over Alice: Deposit: $618k, Profit: $30.9k in 10 min
     
-    Alice-eded()
-    Hook-->>Alice: Gap: 400%<br/>R$30,900
+    Alice->>Pool: rebalancePool() - Deposit $618,000 USDC
     
-   
+    Pool->>Hook: beforeAddLiquidity()
+    Hook->>Hook: Calculate new price
+    Note over Hook: $618,000 shifts price $1.00 → $4.80
+    Hook->>Hook: New gap: ($5.00 - $4.80) / $4.80 = 4.2%
     
-    Alice->>Pool: rebalancePool()<br/>DepoSDC
+    Note over Hook: Gap < 100% → UNFREEZE POOL
+    Hook->>Pool: Status: UNFROZEN
     
-    Pool->>Ho
+    Hook->>Hook: Calculate bonus: 5% (capped)
+    Note over Hook: Bonus = $618,000 × 5% = $30,900
+    Vault->>Alice: Pay bonus: $30,900
     
-    Hook->>H
+    Alice->>Alice: Total received: $648.9k
+    Note over Alice: Profit: $30.9k cash + $618k LP tokens
     
-    Hook->>Hook: New gap:<br/>($5.00 - $4.80) / $4.80<br/ 4.2% ✓
+    Pool->>Pool: Status: UNFROZEN, Trading resumes
     
-L ✓
-    
-lue
-    
-
-    
-0
-    
-    Alice->>Alice: Total received:<9k
-    
-    Pool->>Pool: Status: UNFROZEN ✓<br/>Trading resumes
-    
-
+    Note over Alice,Vault: RESULT
+    Note over Alice: ✅ Alice profit: $30.9k
+    Note over Pool: ✅ Pool fixed
+    Note over Vault: ✅ Farmers protected
 ```
 
 ---
 
-## onsal Innovatiematices & Math🎨 Featuraincted agrmers prote Fak<br/>✅ $30.9e profits fixed, Alict: ✅ Poolce,Vauler Ali   Note ov = $648./><br $30.9k cashk LP +$618br/>s: $30,90onue: Pay bicault->>Al    Vr/>= $30,900pped at 5%<b/>Ca%<br10,000 = 16² / 00<br/>4 bonus:culateal>>Hook: Ck-   Hoo  vans: $618kokeLP t Mint e:Alicool->>    PEZE POORE>UNF 100%<br/k: Gap <Hook->>Hoo    >=0 → $4.80$1.0ce<br/>shifts prik $618e:<br/>e new priculatook: CalcLiquidity()Add: beforeok$618,000 Ut: si DO IT!on:<br/>Decisimin0.9k in 10 fit: $3r/>Pro$648.9k<bk: bac8k<br/>Get eposit: $61fit:<br/>Dulate proce: Calcce->>Ali Aliped) = s: 5% (capbr/>Bonu8,000<al: $61pituired caeqanceNekRebalok: chec>>HoPPORTU SEES OCEVault: ALIAlice, <br/>Gap:: $5.00cle priceacle: Ora>>Orracle- OZENtatus: FRO>S.00<br/ce: $1r/>Pri<btate:rent s>Pool: Cur    Pool->  > 100%)N (Gap FROZEt Vault as 🏦panOraclether  as 🌡️ Weat OraclenriHooks 🪝 Agnt Hook aswap Poolol as 💱 Uni Popanttici pareDiagrasequencool Recovery Pr payoutsfo$3,750 Vault gets />💰 d<br protecteLP tokenss  ✅ Farmer',Vault:it: $0 ❌oft prSULT BOT REot,Vault:ote over B N = $7,50000 × $7.50ost: 10l->>Bot: C       Poo 000)rice(1tOraclePyAbu>>Pool: clePrice(OrauyAtUse b Error: "ook-->>Bot:        He Gap     els1.2fee → $.5= $750 : $5 + $2. pays>>Hook: Botook- H        feeull gap/>Charge fFee(gap%)<br: setDynamic>Pool   Hook->  e Gap 50-10    elsGap < 50%lt     a= 5.00<br/> $5$5.00) /7.50 - r/>($b × 1.50 =<br/>$5.00 price:edr = >Multipliebr/<ataerDeathtW geOracle: Hook->>   rice = $5.00arket p-->>Hook: M   FTSO ce("COFF: getPri Hook->>FTSO00ACTIVATION PROTECTok:  HoNote over p() triggewareSHook: befoPool->>    trage: $2.bibr/>Are: $7.50<br/>Binanc00<$5.br/>Pool: k prices:< Chect:      trueht =rougsD✓<br/>i  → PRICE SHOUD GHT DETECTE
+## 🎨 Mathematical Innovations
 
 ### 1. Weather-Adjusted Oracle Pricing
 
@@ -1057,62 +1059,3 @@ Built with:
 - Next.js + wagmi + RainbowKit
 - Foundry + Solidity
 
-**Making DeFi markets react to reality.**
-
-
-### Bot Attack Flow
-
-```mermaid
-sequenceDiagram
-    actor Bot as 🤖 MEV Bot
-    participant Pool as 💱 Uniswap Pool
-    participant Hook as 🪝 AgriHook
-    participant Oracle as 🌡️ Weather Oracle
-    participant FTSO as 📊 FTSO
-    participant Vault as 🏦 Vault
-    
-    Note over Bot,Vault: DROUGHT DETECTED → PRICE SHOULD RISE
-    Oracle->>Oracle: isDrought = true
-    
-    Bot->>Bot: Pool: $5.00 | Binance: $7.50<br/>Arbitrage: $2.50!
-    Bot->>Pool: swap() Buy 1000 COFFEE
-    Pool->>Hook: beforeSwap()
-    
-    Hook->>Pool: getCurrentPrice() → $5.00
-    Hook->>FTSO: getPrice() → $5.00
-    Hook->>Oracle: getWeatherData() → Drought 150%
-    Hook->>Hook: Adjusted: $5.00 × 1.50 = $7.50<br/>Gap: 50%
-    
-    Hook->>Pool: Charge 50% fee = $2.50
-    Hook->>Vault: Send $1.25 to treasury
-    
-    Bot->>Bot: Total cost: $7.50<br/>Sells at: $7.50<br/>Profit: $0 ❌
-    
-    Note over Bot,Vault: ✅ LP protected | 💰 Vault funded
-```
-
-### Pool Recovery Flow
-
-```mermaid
-sequenceDiagram
-    actor Alice as 💰 Rebalancer
-    participant Pool as 💱 Pool
-    participant Hook as 🪝 AgriHook
-    participant Vault as 🏦 Vault
-    
-    Note over Alice,Vault: POOL FROZEN (Gap > 100%)
-    Pool->>Pool: Price: $1.00 | Status: FROZEN
-    
-    Alice->>Hook: checkRebalanceNeeded()
-    Hook-->>Alice: Need $618k | Bonus: 5% = $30.9k
-    
-    Alice->>Pool: Deposit $618,000
-    Pool->>Hook: beforeAddLiquidity()
-    Hook->>Hook: New price: $4.80<br/>Gap: 4.2% ✓
-    Hook->>Pool: UNFREEZE ✓
-    
-    Pool->>Alice: LP tokens: $618k
-    Vault->>Alice: Bonus: $30.9k
-    
-    Note over Alice,Vault: ✅ Pool fixed | Alice profits $30.9k
-```
